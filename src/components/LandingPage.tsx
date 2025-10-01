@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
       description: "AI-powered pricing recommendations based on market trends and your portfolio",
       gradient: "from-indigo-500 to-purple-500",
       color: "indigo",
-      image: "/src/components/ui/Pricing calculator.jpg"
+      image: "/Pricing calculator.jpg"
     },
     {
       icon: Users,
