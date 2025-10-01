@@ -3,17 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Sparkles, 
-  Palette, 
-  CheckCircle,
   Clock,
   Shield,
   Users,
-  Play,
   ArrowLeft,
   MessageCircle,
   Star,
   Zap,
-  Heart,
   TrendingUp,
   Award,
   Mail

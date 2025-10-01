@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface ColorRGB {
   r: number;
@@ -73,10 +73,6 @@ export default function SmokeyCursor({
   backgroundColor = { r: 0.5, g: 0, b: 0 },
   transparent = true,
   className = "",
-  disabled = false,
-  intensity = 1,
-  followMouse = true,
-  autoColors = true,
 }: SmokeyCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, Instagram, Linkedin } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 
 type AvatarProps = {

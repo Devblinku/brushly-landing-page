@@ -7,10 +7,6 @@ import {
   Clock, 
   Send, 
   MessageSquare, 
-  Headphones, 
-  Users,
-  Zap,
-  Shield,
   CheckCircle
 } from 'lucide-react';
 import { ModernHeader } from './ui/modern-header';

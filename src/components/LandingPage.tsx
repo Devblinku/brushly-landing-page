@@ -1,40 +1,19 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Sparkles, 
-  Palette, 
-  Wand2, 
   FileText, 
-  Mail, 
   Instagram, 
   Twitter, 
   Facebook,
   ArrowRight,
   Star,
-  Zap,
-  Target,
-  Brain,
-  Lightbulb,
-  TrendingUp,
   Users,
   Globe,
-  Shield,
-  Clock,
-  CheckCircle,
-  Play,
-  ChevronDown,
   Sparkle,
-  Zap as ZapIcon,
-  Target as TargetIcon,
-  Users as UsersIcon,
-  Heart,
   Image,
   Layers,
-  Smartphone,
-  Monitor,
   Calculator,
-  Building,
   Award
 } from 'lucide-react';
 import SmokeyCursor from './ui/SmokeyCursor';
@@ -42,13 +21,11 @@ import { ModernHeader } from './ui/modern-header';
 import { GradientBarHeroSection } from './ui/gradient-bar-hero-section';
 import { ContainerScroll } from './ui/container-scroll-animation';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);

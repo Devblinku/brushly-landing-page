@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import industry-standard responsive system */
+@import './responsive-system.css';
+
 /* Hide scrollbar for carousel */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -24,9 +27,6 @@
   --color-4: 195 100% 63%;
   --color-5: 90 100% 63%;
 }
-
-/* Import industry-standard responsive system */
-@import './responsive-system.css';
 
 /* Define production-scrollbar in Tailwind's components layer */
 @layer components {
