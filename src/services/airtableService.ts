@@ -6,62 +6,40 @@ interface BetaUserData {
   artType: string;
 }
 
-interface AirtableField {
-  [key: string]: string;
-}
 
 class AirtableService {
-  private readonly baseUrl: string;
-  private readonly apiKey: string;
-  private readonly tableName: string;
+  private readonly functionUrl: string;
 
   constructor() {
-    this.baseUrl = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}`;
-    this.apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
-    this.tableName = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
-
-    // Validate environment variables
-    if (!this.apiKey || !import.meta.env.VITE_AIRTABLE_BASE_ID || !this.tableName) {
-      console.error('Missing Airtable environment variables. Please check your .env file.');
-    }
+    // Use Netlify function URL - works both locally and in production
+    this.functionUrl = '/.netlify/functions/submit-beta-user';
   }
 
   /**
-   * Submit beta user data to Airtable
+   * Submit beta user data to Airtable via Netlify function
    */
   async submitBetaUser(userData: BetaUserData): Promise<boolean> {
     try {
-      const fields: AirtableField = {
-        // Map form data to Airtable field IDs
-        "fldDPM6QejGFJFByl": userData.firstName, // First Name
-        "fldENlHz6yCYtP8U4": userData.phone,     // Phone Number
-        "fldCDA50S9gdyIsu0": userData.email,     // Email Address
-        "fldrMgWWVK1JAjVjk": userData.artType    // Primary Art Type
-      };
-
-      const response = await fetch(`${this.baseUrl}/${this.tableName}`, {
+      const response = await fetch(this.functionUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          fields
-        })
+        body: JSON.stringify(userData)
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Airtable API Error:', errorData);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error('Netlify Function Error:', errorData);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorData.error || 'Unknown error'}`);
       }
 
       const result = await response.json();
-      console.log('Successfully submitted to Airtable:', result.id);
+      console.log('Successfully submitted via Netlify function:', result.message);
       return true;
 
     } catch (error) {
-      console.error('Error submitting to Airtable:', error);
+      console.error('Error submitting to Netlify function:', error);
       throw error;
     }
   }
@@ -70,7 +48,8 @@ class AirtableService {
    * Check if Airtable service is properly configured
    */
   isConfigured(): boolean {
-    return !!(this.apiKey && import.meta.env.VITE_AIRTABLE_BASE_ID && this.tableName);
+    // Always return true since configuration is handled server-side
+    return true;
   }
 }
 

@@ -1,36 +1,38 @@
 # Airtable Integration Setup
 
-This project uses Airtable to store beta user registrations from both the homepage and pricing page forms.
+This project uses Airtable to store beta user registrations from both the homepage and pricing page forms. The integration uses **Netlify Functions** to securely handle API calls server-side, keeping your API keys safe.
 
 ## Environment Variables Setup
 
 1. Create a `.env` file in the root directory of your project
-2. Add the following environment variables:
+2. Add the following environment variables (note: NO `VITE_` prefix for security):
 
 ```env
-# Airtable Configuration
-VITE_AIRTABLE_API_KEY=your_airtable_api_key_here
-VITE_AIRTABLE_BASE_ID=your_airtable_base_id_here
-VITE_AIRTABLE_TABLE_NAME=your_airtable_table_name_here
+# Airtable Configuration (Server-side only)
+AIRTABLE_API_KEY=your_airtable_api_key_here
+AIRTABLE_BASE_ID=your_airtable_base_id_here
+AIRTABLE_TABLE_NAME=your_airtable_table_name_here
 ```
+
+**Important**: These variables are now server-side only and will NOT be exposed to the client.
 
 ## Getting Your Airtable Credentials
 
 ### 1. API Key
 - Go to [Airtable Account](https://airtable.com/account)
 - Generate a personal access token
-- Copy the token and use it as `VITE_AIRTABLE_API_KEY`
+- Copy the token and use it as `AIRTABLE_API_KEY`
 
 ### 2. Base ID
 - Open your Airtable base
 - Go to Help → API Documentation
 - Your Base ID will be shown at the top (starts with `app...`)
-- Copy and use as `VITE_AIRTABLE_BASE_ID`
+- Copy and use as `AIRTABLE_BASE_ID`
 
 ### 3. Table Name
 - Use the exact name of your table in Airtable
 - Case-sensitive (e.g., "Beta Users", "Waitlist", etc.)
-- Use as `VITE_AIRTABLE_TABLE_NAME`
+- Use as `AIRTABLE_TABLE_NAME`
 
 ## Airtable Table Structure
 
@@ -53,22 +55,43 @@ Both forms (homepage and pricing page) collect:
 
 ## Service Architecture
 
-The integration uses a service layer pattern:
+The integration now uses a **secure server-side architecture**:
 
-- **Service**: `src/services/airtableService.ts`
-- **Forms**: Homepage and Pricing page forms both use the same service
-- **Environment**: All credentials stored in `.env` file
+- **Client Service**: `src/services/airtableService.ts` - Calls Netlify function
+- **Server Function**: `netlify/functions/submit-beta-user.js` - Handles Airtable API calls
+- **Forms**: Homepage and Pricing page forms both use the same client service
+- **Environment**: All credentials stored securely server-side in `.env` file
 - **Error Handling**: Comprehensive error handling and user feedback
+
+## Netlify Functions
+
+The project uses Netlify Functions to:
+- Keep API keys secure on the server-side
+- Handle CORS automatically
+- Provide better error handling
+- Prevent API key exposure in client-side code
 
 ## Testing
 
-1. Fill out either form on the homepage or pricing page
-2. Check your Airtable base to confirm the data was submitted
-3. Check browser console for any errors if submission fails
+### Local Development
+1. Install Netlify CLI: `npm install -g netlify-cli`
+2. Run locally: `netlify dev`
+3. Fill out forms to test the integration
+
+### Production
+1. Deploy to Netlify
+2. Set environment variables in Netlify dashboard (Site settings → Environment variables)
+3. Test forms on your live site
 
 ## Security Notes
 
+✅ **Secure Implementation**:
+- API credentials are server-side only and never exposed to clients
+- Environment variables don't use `VITE_` prefix (not bundled with client code)
+- Netlify Functions provide secure server-side execution
+- CORS is properly handled for cross-origin requests
+
+⚠️ **Important**:
 - Never commit your `.env` file to version control
+- Set environment variables in Netlify dashboard for production
 - The `.env` file is already included in `.gitignore`
-- API credentials are only accessible on the client side (suitable for this use case)
-- For production, consider using server-side API calls for additional security

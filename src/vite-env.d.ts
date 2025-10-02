@@ -1,9 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_AIRTABLE_BASE_ID: string
-  readonly VITE_AIRTABLE_API_KEY: string
-  readonly VITE_AIRTABLE_TABLE_NAME: string
+  // Add any future VITE_ environment variables here
 }
 
 interface ImportMeta {
