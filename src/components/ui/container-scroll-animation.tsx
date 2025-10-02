@@ -28,28 +28,53 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    return isMobile ? [0.7, 0.9] : [1.05, 1];
+    return isMobile ? [0.8, 0.95] : [1.05, 1];
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 0.3], [35, 0]);
+  // Create separate rotation transforms for mobile and desktop
+  const rotateDesktop = useTransform(scrollYProgress, [0, 0.3], [35, 0]);
+  // For mobile, use EXACTLY the same values as desktop
+  const rotateMobile = useTransform(scrollYProgress, [0, 0.3], [35, 0]);
+  
+  // Debug: Log the rotation setup
+  React.useEffect(() => {
+    console.log(`🔧 SETUP - Mobile: ${isMobile}`);
+    console.log(`🔧 Desktop rotation: [35° → 0°] (tilted → flat)`);
+    console.log(`🔧 Mobile rotation: [35° → 0°] (SAME AS DESKTOP)`);
+  }, [isMobile]);
+  
+  const rotate = isMobile ? rotateMobile : rotateDesktop;
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  // Debug: Log scroll progress
+  // Debug: Log detailed rotation behavior
   React.useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      console.log("Scroll progress:", latest);
+    const unsubscribeScroll = scrollYProgress.on("change", (latest) => {
+      console.log(`📊 Scroll: ${latest.toFixed(3)} | Mobile: ${isMobile}`);
     });
-    return unsubscribe;
-  }, [scrollYProgress]);
+    
+    const unsubscribeRotate = rotate.on("change", (latest) => {
+      const direction = isMobile ? "MOBILE" : "DESKTOP";
+      console.log(`🔄 ${direction} Rotation: ${latest.toFixed(1)}°`);
+      
+      // Log start and end states
+      if (latest > 30) console.log(`🎬 ${direction} START: ${latest.toFixed(1)}° (should be tilted)`);
+      if (latest < 5 && latest > -5) console.log(`🏁 ${direction} END: ${latest.toFixed(1)}° (should be flat)`);
+    });
+    
+    return () => {
+      unsubscribeScroll();
+      unsubscribeRotate();
+    };
+  }, [scrollYProgress, rotate, isMobile]);
 
   return (
     <div
-      className="h-[60rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20"
+      className="h-[35rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20"
       ref={containerRef}
     >
       <div
-        className="py-10 md:py-40 w-full relative"
+        className="py-4 md:py-40 w-full relative"
         style={{
           perspective: "1000px",
         }}
@@ -96,7 +121,7 @@ export const Card = ({
         boxShadow:
           "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
       }}
-      className="max-w-8xl -mt-12 mx-auto h-[35rem] md:h-[45rem] w-full border-4 border-slate-700 p-2 md:p-6 bg-slate-800 rounded-[30px] shadow-2xl relative"
+      className="max-w-8xl mt-4 md:-mt-12 mx-auto h-[12rem] md:h-[45rem] w-full max-w-[90vw] md:max-w-none border-4 border-slate-700 p-2 md:p-6 bg-slate-800 rounded-[30px] shadow-2xl relative"
     >
       {/* 4 BorderBeams positioned on all 4 sides */}
       <div className="absolute -inset-1 rounded-[32px]">

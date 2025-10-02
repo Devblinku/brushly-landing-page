@@ -20,13 +20,77 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
+import { airtableService, type BetaUserData } from '../services/airtableService';
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
+  
+  // Form state
+  const [formData, setFormData] = React.useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    artType: ''
+  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Form handlers
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Check if Airtable service is configured
+      if (!airtableService.isConfigured()) {
+        throw new Error('Airtable service is not properly configured. Please check environment variables.');
+      }
+
+      // Prepare data for submission
+      const betaUserData: BetaUserData = {
+        firstName: formData.firstName,
+        phone: formData.phone,
+        email: formData.email,
+        artType: formData.artType
+      };
+
+      // Submit to Airtable using service
+      await airtableService.submitBetaUser(betaUserData);
+
+      // Success handling
+      setIsSubmitted(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        artType: ''
+      });
+      
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting the form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
@@ -87,10 +151,10 @@ const PricingPage: React.FC = () => {
                 <span className="text-teal-300 font-bold text-lg">Flexible Plans</span>
               </div>
               
-              <h1 className="text-5xl lg:text-6xl font-bold mb-8 leading-tight">
-                <span className="text-slate-200">Simple, transparent pricing—</span>
+              <h1 className="text-2xl lg:text-6xl font-bold mb-8 leading-tight">
+                <span className="text-slate-200">Simple Transparent Pricing</span>
                 <br />
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-6xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-3xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                   tailored to your needs
                 </span>
               </h1>
@@ -304,71 +368,110 @@ const PricingPage: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
             >
               {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-400/5 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-400/5 rounded-3xl pointer-events-none"></div>
               
               <div className="relative z-10 text-center mb-8">
-                <h3 className="text-3xl font-bold text-slate-200 mb-4">
-                  Be the First to Know When Pricing Goes Live
+                <h3 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
+                  <span className="text-slate-200">Join</span>
+                  <br className="lg:hidden" />
+                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Exclusive Beta Waitlist</span>
                 </h3>
                 <p className="text-xl text-slate-300 max-w-2xl mx-auto">
                   Join our waitlist and get early access to special launch pricing, plus exclusive beta features.
                 </p>
               </div>
 
-              <form className="max-w-2xl mx-auto space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {!isSubmitted ? (
+                <form className="relative z-20 max-w-2xl mx-auto space-y-6" onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName" className="text-slate-200">First Name</Label>
+                      <Input 
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        placeholder="Enter your first name"
+                        className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-slate-200">Phone Number</Label>
+                      <Input 
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="Enter your phone number"
+                        className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-slate-200">First Name</Label>
+                    <Label htmlFor="email" className="text-slate-200">Email Address</Label>
                     <Input 
-                      id="firstName" 
-                      placeholder="Enter your first name"
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter your email address"
                       className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                      required
                     />
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-slate-200">Last Name</Label>
+                    <Label htmlFor="artType" className="text-slate-200">Primary Art Type</Label>
                     <Input 
-                      id="lastName" 
-                      placeholder="Enter your last name"
+                      id="artType"
+                      name="artType"
+                      value={formData.artType}
+                      onChange={handleInputChange}
+                      placeholder="Enter your primary art type"
                       className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                      required
                     />
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-200">Email Address</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Enter your email address"
-                    className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="artType" className="text-slate-200">Primary Art Type</Label>
-                  <Input 
-                    id="artType" 
-                    placeholder="Enter your primary art type"
-                    className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
-                  />
-                </div>
 
-                <div className="pt-4">
-                  <Button 
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300"
-                  >
-                    <Mail className="w-6 h-6 mr-3" />
-                    Get Early Access
-                  </Button>
+                  <div className="pt-4">
+                    <Button 
+                      type="submit"
+                      size="lg"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-6 h-6 mr-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="w-6 h-6 mr-3" />
+                          Get Early Access
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <div className="max-w-2xl mx-auto text-center py-12">
+                  <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-200 mb-2">You're on the List!</h3>
+                  <p className="text-slate-400">Thank you for your interest! We'll notify you as soon as pricing is available.</p>
                 </div>
+              )}
 
-                <p className="text-sm text-slate-400 text-center">
-                  ✨ No spam, ever • Exclusive launch pricing • First access to new features
-                </p>
-              </form>
+              <p className="text-sm text-slate-400 text-center mt-6">
+                ✨ No spam, ever • Exclusive launch pricing • First access to new features
+              </p>
             </motion.div>
 
             {/* Social Proof / Trust Markers */}

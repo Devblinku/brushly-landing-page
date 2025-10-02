@@ -2,11 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Instagram, 
-  Twitter, 
-  Facebook,
   ArrowRight,
   ArrowLeft,
-  Mail,
   Heart
 } from 'lucide-react';
 
@@ -47,15 +44,6 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
               <a href="#" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
                 <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
-                <Twitter className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
-                <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
-                <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              </a>
             </div>
           </div>
 
@@ -64,7 +52,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
             <h3 className="text-slate-200 font-semibold text-lg mb-6">Product</h3>
             <ul className="space-y-4">
               <li>
-                {currentPage === 'pricing' ? (
+                {currentPage !== 'home' ? (
                   <button 
                     onClick={() => navigate('/#features')}
                     className="text-slate-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
@@ -80,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
                 )}
               </li>
               <li>
-                {currentPage === 'pricing' ? (
+                {currentPage !== 'home' ? (
                   <button 
                     onClick={() => navigate('/#platforms')}
                     className="text-slate-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
@@ -91,6 +79,22 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
                 ) : (
                   <a href="#platforms" className="text-slate-400 hover:text-teal-400 transition-colors duration-300 flex items-center group">
                     <span>Platforms</span>
+                    <ArrowRight className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                  </a>
+                )}
+              </li>
+              <li>
+                {currentPage !== 'home' ? (
+                  <button 
+                    onClick={() => navigate('/#testimonials')}
+                    className="text-slate-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
+                  >
+                    <span>Testimonials</span>
+                    <ArrowLeft className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all duration-300" />
+                  </button>
+                ) : (
+                  <a href="#testimonials" className="text-slate-400 hover:text-teal-400 transition-colors duration-300 flex items-center group">
+                    <span>Testimonials</span>
                     <ArrowRight className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
                   </a>
                 )}
@@ -178,11 +182,11 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-slate-700/50">
-          <div className="flex items-center space-x-6 mb-4 md:mb-0">
-            <p className="text-slate-500 text-sm">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-6 mb-4 md:mb-0 items-center">
+            <p className="text-slate-500 text-sm mb-2 md:mb-0 text-center md:text-left">
               © 2025 Brushly. All rights reserved.
             </p>
-            <div className="flex items-center space-x-2 text-slate-500 text-sm">
+            <div className="flex items-center justify-center space-x-2 text-slate-500 text-sm">
               <span>Made with</span>
               <Heart className="w-4 h-4 text-red-400 fill-current" />
               <span>for artists</span>

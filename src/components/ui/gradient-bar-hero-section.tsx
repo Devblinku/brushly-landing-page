@@ -109,7 +109,7 @@ const WaitlistForm: React.FC = () => {
 export const GradientBarHeroSection: React.FC = () => {
   return (
     <AuroraBackground className="min-h-screen">
-      <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen py-8 sm:py-16 px-6 sm:px-8 md:px-12">
+      <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen pt-8 sm:pt-16 pb-4 sm:pb-6 px-6 sm:px-8 md:px-12">
         <div className="mb-12 sm:mb-16 mt-16 sm:mt-20">
           <TrustElements />
         </div>

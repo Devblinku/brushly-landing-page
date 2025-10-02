@@ -6,6 +6,7 @@ import {
   Instagram, 
   Twitter, 
   Facebook,
+  Linkedin,
   ArrowRight,
   Star,
   Users,
@@ -14,7 +15,9 @@ import {
   Image,
   Layers,
   Calculator,
-  Award
+  Award,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import SmokeyCursor from './ui/SmokeyCursor';
 import { ModernHeader } from './ui/modern-header';
@@ -24,35 +27,117 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
+import { airtableService, type BetaUserData } from '../services/airtableService';
 
 const LandingPage: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  
+  // Form state
+  const [formData, setFormData] = React.useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    artType: ''
+  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Update current slide based on scroll position
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleScroll = () => {
+      const cardWidth = window.innerWidth <= 768 ? 320 + 36 : 480 + 36;
+      const scrollLeft = carousel.scrollLeft;
+      const newSlide = Math.round(scrollLeft / cardWidth);
+      setCurrentSlide(newSlide);
+    };
+
+    carousel.addEventListener('scroll', handleScroll);
+    return () => carousel.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSlide = (index: number) => {
+    if (carouselRef.current) {
+      const cardWidth = window.innerWidth <= 768 ? 320 + 36 : 480 + 36; // card width + gap
+      carouselRef.current.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth'
+      });
+      setCurrentSlide(index);
+    }
+  };
+
+  const nextSlide = () => {
+    const nextIndex = (currentSlide + 1) % canvasFeatures.length;
+    scrollToSlide(nextIndex);
+  };
+
+  const prevSlide = () => {
+    const prevIndex = currentSlide === 0 ? canvasFeatures.length - 1 : currentSlide - 1;
+    scrollToSlide(prevIndex);
+  };
+
+  // Form handlers
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Check if Airtable service is configured
+      if (!airtableService.isConfigured()) {
+        throw new Error('Airtable service is not properly configured. Please check environment variables.');
+      }
+
+      // Prepare data for submission
+      const betaUserData: BetaUserData = {
+        firstName: formData.firstName,
+        phone: formData.phone,
+        email: formData.email,
+        artType: formData.artType
+      };
+
+      // Submit to Airtable using service
+      await airtableService.submitBetaUser(betaUserData);
+
+      // Success handling
+      setIsSubmitted(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        artType: ''
+      });
+      
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting the form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const canvasFeatures = [
-    {
-      icon: FileText,
-      title: "SEO Keywords",
-      description: "Generate targeted keywords to boost your art's online visibility",
-      gradient: "from-emerald-500 to-teal-400",
-      color: "emerald"
-    },
-    {
-      icon: Instagram,
-      title: "Instagram Bio",
-      description: "Craft compelling bios that convert visitors to followers",
-      gradient: "from-pink-500 to-purple-500",
-      color: "pink"
-    },
-    {
-      icon: Award,
-      title: "Gallery/Art Fair Submissions",
-      description: "Generate professional submission packages for galleries and art fairs",
-      gradient: "from-orange-500 to-red-500",
-      color: "orange"
-    },
     {
       icon: Calculator,
       title: "Smart Pricing Calculator",
@@ -62,11 +147,36 @@ const LandingPage: React.FC = () => {
       image: "/Pricing calculator.jpg"
     },
     {
+      icon: Award,
+      title: "Gallery/Art Fair Submissions",
+      description: "Generate professional submission packages for galleries and art fairs",
+      gradient: "from-orange-500 to-red-500",
+      color: "orange",
+      image: "/gallery.jpg"
+    },
+    {
       icon: Users,
       title: "Collector Follow-up",
       description: "Build lasting relationships with personalized email templates",
       gradient: "from-cyan-500 to-blue-500",
-      color: "cyan"
+      color: "cyan",
+      image: "/collector follow.jpg"
+    },
+    {
+      icon: Instagram,
+      title: "Instagram Bio",
+      description: "Craft compelling bios that convert visitors to followers",
+      gradient: "from-pink-500 to-purple-500",
+      color: "pink",
+      image: "/Reel.jpg"
+    },
+    {
+      icon: FileText,
+      title: "SEO Keywords",
+      description: "Generate targeted keywords to boost your art's online visibility",
+      gradient: "from-emerald-500 to-teal-400",
+      color: "emerald",
+      image: "/SEo.jpg"
     }
   ];
 
@@ -94,6 +204,14 @@ const LandingPage: React.FC = () => {
       gradient: "from-blue-600 to-indigo-600",
       aiPreview: "🌟 Excited to share my latest creation! This piece represents the journey of transformation - from raw emotion to refined expression. #ArtisticJourney #Transformation",
       aiLabel: "Generated Post"
+    },
+    {
+      icon: Linkedin,
+      name: "LinkedIn",
+      description: "Connect with art professionals and showcase your work",
+      gradient: "from-blue-700 to-blue-500",
+      aiPreview: "Thrilled to unveil my latest artwork exploring the intersection of technology and human emotion. This piece reflects our evolving relationship with digital creativity. #DigitalArt #Innovation #ArtisticExpression",
+      aiLabel: "Generated Professional Post"
     },
     {
       icon: Globe,
@@ -189,17 +307,17 @@ const LandingPage: React.FC = () => {
                   <span className="text-teal-300 font-bold text-lg">AI-Powered Creative Dashboard</span>
                 </div>
                 
-                <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight">
+                <h2 className="text-3xl lg:text-6xl font-bold mb-8 leading-tight">
                   <span className="text-slate-200">Experience the Future of</span>
                   <br />
-                  <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
-                    Art Management
+                  <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-4xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                    Artwork Management
                   </span>
                 </h2>
                 
                 <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                  See how our AI-powered dashboard transforms your creative workflow. 
-                  Manage artwork, generate content, and publish across platforms seamlessly.
+                  See how our AI-powered dashboard transforms your creative workflow.
+                  <span className="hidden md:inline"> Manage artwork, generate content, and publish across platforms seamlessly.</span>
                 </p>
               </motion.div>
             }
@@ -208,7 +326,7 @@ const LandingPage: React.FC = () => {
               <img
                 src="/Home.jpg"
                 alt="Brushly Creative Dashboard"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center"
                 draggable={false}
               />
             </div>
@@ -230,23 +348,43 @@ const LandingPage: React.FC = () => {
                 <span className="text-teal-300 font-bold text-lg">AI-Powered Canvas Features</span>
               </div>
               
-              <h2 className="text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+              <h2 className="text-3xl lg:text-6xl font-bold mb-8 leading-tight">
                 <span className="text-slate-200">Ignite Your</span>
                 <br />
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-6xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-4xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                   Creative Potential
                 </span>
               </h2>
               
               <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Transform your artistic vision into powerful marketing content with our AI-driven canvas features. 
-                Each tool is designed to amplify your reach and build meaningful connections with collectors.
+                <span className="hidden md:inline">Transform your artistic vision into powerful marketing content with our AI-driven canvas features. </span>Each tool is designed to amplify your reach and build meaningful connections with collectors.
               </p>
             </motion.div>
 
             {/* Horizontal Carousel with Portrait Cards */}
-            <div className="relative overflow-y-hidden h-[42rem]">
-              <div className="flex overflow-x-auto scrollbar-hide gap-9 py-9 px-3 h-full" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', overflowY: 'hidden' }}>
+            <div className="relative overflow-y-hidden h-[30rem] md:h-[42rem]">
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              <button
+                onClick={nextSlide}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+
+              <div 
+                ref={carouselRef}
+                className="flex overflow-x-auto scrollbar-hide gap-9 py-9 px-3 h-full" 
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', overflowY: 'hidden' }}
+              >
                 {canvasFeatures.map((feature, index) => {
                   const Icon = feature.icon;
                   return (
@@ -258,17 +396,17 @@ const LandingPage: React.FC = () => {
                       transition={{ duration: 0.6, delay: index * 0.1 }}
                     >
                       {/* Portrait Glass Card */}
-                      <div className="relative w-[30rem] h-[36rem] bg-slate-800/40 backdrop-blur-xl rounded-3xl border border-slate-700/50 hover:bg-slate-800/60 transition-all duration-500 shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-2 overflow-hidden hover:z-10">
+                      <div className="relative w-[20rem] h-[24rem] md:w-[30rem] md:h-[36rem] bg-slate-800/40 backdrop-blur-xl rounded-3xl border border-slate-700/50 hover:bg-slate-800/60 transition-all duration-500 shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-2 overflow-hidden hover:z-10">
                         {/* Glow Effect */}
                         <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500`}></div>
                         
                         {/* Card Image */}
-                        <div className="relative h-72 w-full overflow-hidden rounded-t-3xl">
+                        <div className="relative h-48 md:h-72 w-full overflow-hidden rounded-t-3xl">
                           {feature.image ? (
                             <img 
                               src={feature.image} 
                               alt={feature.title}
-                              className="w-full h-full object-contain"
+                              className="w-full h-full object-contain rounded-t-3xl"
                             />
                           ) : (
                             <div className={`w-full h-full bg-gradient-to-br ${feature.gradient} flex items-center justify-center`}>
@@ -280,27 +418,27 @@ const LandingPage: React.FC = () => {
                         </div>
 
                         {/* Card Content */}
-                        <div className="p-9 flex flex-col h-72">
+                        <div className="p-6 md:p-9 flex flex-col h-48 md:h-72">
                           {/* 3D Icon */}
-                          <div className="relative mb-6">
-                            <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                              <Icon className="w-8 h-8 text-white" />
+                          <div className="relative mb-4 md:mb-6">
+                            <div className={`w-12 h-12 md:w-16 md:h-16 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                              <Icon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                             </div>
                             {/* Icon Glow */}
-                            <div className={`absolute inset-0 w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity duration-500`}></div>
+                            <div className={`absolute inset-0 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity duration-500`}></div>
                           </div>
 
                           {/* Content */}
-                          <h3 className="text-2xl font-bold text-slate-200 mb-4 group-hover:text-white transition-colors duration-300">
+                          <h3 className="text-lg md:text-2xl font-bold text-slate-200 mb-3 md:mb-4 group-hover:text-white transition-colors duration-300">
                             {feature.title}
                           </h3>
-                          <p className="text-slate-400 text-base leading-relaxed group-hover:text-slate-300 transition-colors duration-300 flex-grow">
+                          <p className="text-slate-400 text-sm md:text-base leading-relaxed group-hover:text-slate-300 transition-colors duration-300 flex-grow">
                             {feature.description}
                           </p>
 
                           {/* Hover Arrow */}
-                          <div className="absolute bottom-9 right-9 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                            <ArrowRight className={`w-7 h-7 text-${feature.color}-400`} />
+                          <div className="absolute bottom-6 right-6 md:bottom-9 md:right-9 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                            <ArrowRight className={`w-5 h-5 md:w-7 md:h-7 text-${feature.color}-400`} />
                           </div>
                         </div>
                       </div>
@@ -313,17 +451,26 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
             
-            {/* Scroll Indicators - Outside the carousel */}
-            <div className="flex justify-center mt-6 space-x-2">
+            {/* Dot Indicators - Outside the carousel */}
+            <div className="flex justify-center mt-6 space-x-3">
               {canvasFeatures.map((_, index) => (
-                <div key={index} className="w-2 h-2 bg-slate-600 rounded-full hover:bg-slate-400 transition-colors duration-300 cursor-pointer"></div>
+                <button
+                  key={index}
+                  onClick={() => scrollToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index 
+                      ? 'bg-teal-400 shadow-lg shadow-teal-400/50' 
+                      : 'bg-slate-600 hover:bg-slate-400'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
               ))}
             </div>
           </div>
         </section>
 
         {/* Platform Integration Section with AI Content Preview */}
-        <section id="platforms" className="py-32 px-6 relative">
+        <section id="platforms" className="py-16 px-6 relative">
           <div className="max-w-7xl mx-auto">
             {/* Floating Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
@@ -337,9 +484,10 @@ const LandingPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+              <h2 className="text-3xl lg:text-6xl font-bold mb-8 leading-tight">
                 <span className="text-slate-200">Connect</span>
-                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent font-serif italic text-6xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}> Everywhere</span>
+                <br className="lg:hidden" />
+                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent font-serif italic text-4xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}> Everywhere</span>
               </h2>
               <p className="text-xl text-slate-300 max-w-3xl mx-auto">
                 Seamlessly publish and schedule your artwork across all major social platforms with content that resonates with your audience.
@@ -384,7 +532,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* Mockup Creation Section */}
-        <section id="mockups" className="py-32 px-6 relative">
+        <section id="mockups" className="pt-16 pb-8 px-6 relative">
           <div className="max-w-7xl mx-auto">
             {/* Floating Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
@@ -400,20 +548,20 @@ const LandingPage: React.FC = () => {
             >
               <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-teal-500/20 to-cyan-400/20 border border-teal-500/30 rounded-full px-8 py-4 mb-8">
                 <Image className="w-6 h-6 text-teal-400" />
-                <span className="text-teal-300 font-bold text-lg">AI-Powered Mockup Generator</span>
+                <span className="text-teal-300 font-bold text-lg">AI Mockup Generator</span>
               </div>
               
-              <h2 className="text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+              <h2 className="text-3xl lg:text-6xl font-bold mb-8 leading-tight">
                 <span className="text-slate-200">Create Amazing</span>
                 <br />
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-6xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent font-serif italic text-4xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                   Mockups
                 </span>
               </h2>
               
               <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Transform your artwork into stunning product mockups and lifestyle scenes. 
-                See how your art looks in real-world applications with our AI-powered mockup generator.
+                Transform your artwork into stunning product mockups and lifestyle scenes.
+                <span className="hidden md:inline"> See how your art looks in real-world applications with our AI mockup generator.</span>
               </p>
             </motion.div>
 
@@ -431,12 +579,15 @@ const LandingPage: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-400/10 rounded-3xl"></div>
                   
                   {/* Placeholder Image */}
-                  <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-700 to-slate-600 rounded-2xl flex items-center justify-center overflow-hidden">
-                    <div className="text-center">
-                      <Image className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                      <p className="text-slate-400 text-lg font-medium">Your Artwork Mockup</p>
-                      <p className="text-slate-500 text-sm">Preview how your art looks in real environments</p>
-                    </div>
+                  <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-700 to-slate-600 rounded-2xl overflow-hidden">
+                    <img 
+                      src="/mockup.jpg"
+                      alt="Artwork displayed in a modern living room setting"
+                      className="w-full h-full object-cover rounded-2xl"
+                    />
+                    
+                    {/* Overlay for better text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
                     
                     {/* Decorative Elements */}
                     <div className="absolute top-4 left-4 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
@@ -503,7 +654,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* Beta User Registration Form */}
-        <section className="py-32 px-6 relative">
+        <section className="pt-16 pb-16 px-6 relative">
           <div className="max-w-4xl mx-auto">
             <motion.div 
               className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-12 shadow-2xl overflow-hidden"
@@ -513,12 +664,13 @@ const LandingPage: React.FC = () => {
             >
               
               {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-400/5 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-400/5 rounded-3xl pointer-events-none"></div>
               
               <div className="relative z-10 text-center mb-12">
-                <h2 className="text-5xl font-bold mb-8 leading-tight">
-                  <span className="text-slate-200">Join the</span>
-                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent"> Beta Revolution</span>
+                <h2 className="text-3xl lg:text-5xl font-bold mb-8 leading-tight">
+                  <span className="text-slate-200">Join</span>
+                  <br className="lg:hidden" />
+                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Exclusive Beta Waitlist</span>
                 </h2>
                 <p className="text-xl text-slate-300 leading-relaxed">
                   Be among the first artists to experience the future of AI-powered content creation. 
@@ -526,66 +678,103 @@ const LandingPage: React.FC = () => {
                 </p>
               </div>
 
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {!isSubmitted ? (
+                <form className="relative z-20 space-y-6" onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName" className="text-slate-200">First Name</Label>
+                      <Input 
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        placeholder="Enter your first name"
+                        className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-slate-200">Phone Number</Label>
+                      <Input 
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="Enter your phone number"
+                        className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-slate-200">First Name</Label>
+                    <Label htmlFor="email" className="text-slate-200">Email Address</Label>
                     <Input 
-                      id="firstName" 
-                      placeholder="Enter your first name"
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter your email address"
                       className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                      required
                     />
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-slate-200">Last Name</Label>
+                    <Label htmlFor="artType" className="text-slate-200">Primary Art Type</Label>
                     <Input 
-                      id="lastName" 
-                      placeholder="Enter your last name"
+                      id="artType"
+                      name="artType"
+                      value={formData.artType}
+                      onChange={handleInputChange}
+                      placeholder="Enter your primary art type"
                       className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
+                      required
                     />
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-200">Email Address</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Enter your email address"
-                    className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="artType" className="text-slate-200">Primary Art Type</Label>
-                  <Input 
-                    id="artType" 
-                    placeholder="Enter your primary art type"
-                    className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
-                  />
-                </div>
 
-                <div className="pt-6">
-                  <Button 
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300"
-                  >
-                    <Sparkles className="w-6 h-6 mr-3" />
-                    Join Beta Program
-                  </Button>
-                </div>
+                  <div className="pt-6">
+                    <Button 
+                      type="submit"
+                      size="lg"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-6 h-6 mr-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-6 h-6 mr-3" />
+                          Join Beta Program
+                        </>
+                      )}
+                    </Button>
+                  </div>
 
-                <p className="text-sm text-slate-400 text-center">
-                  ✨ No credit card required • Early access to all features • Priority support
-                </p>
-              </form>
+                  <p className="text-sm text-slate-400 text-center">
+                    ✨ No credit card required • Early access to all features • Priority support
+                  </p>
+                </form>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-200 mb-2">Welcome to the Beta!</h3>
+                  <p className="text-slate-400">Thank you for joining! We'll be in touch soon with your early access details.</p>
+                </div>
+              )}
             </motion.div>
           </div>
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="py-32 px-6 relative">
+        <section id="testimonials" className="pt-16 pb-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
             <motion.div 
               className="text-center mb-20"
@@ -593,9 +782,10 @@ const LandingPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-5xl font-bold mb-8">
+              <h2 className="text-3xl lg:text-6xl font-bold mb-8">
                 <span className="text-slate-200">Loved by</span>
-                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent font-serif italic text-6xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}> Artists Worldwide</span>
+                <br className="lg:hidden" />
+                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent font-serif italic text-4xl lg:text-7xl" style={{ fontFamily: 'Playfair Display, serif' }}> Artists Worldwide</span>
               </h2>
               <p className="text-xl text-slate-400">See what creators are saying about Brushly</p>
             </motion.div>
