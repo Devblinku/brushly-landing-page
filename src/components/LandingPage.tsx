@@ -380,8 +380,14 @@ const LandingPage: React.FC = () => {
                   // Re-enable after a short delay
                   setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
-                onTouchStart={() => setIsNavigationActive(true)}
-                onTouchEnd={() => {
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsNavigationActive(true);
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
@@ -397,8 +403,14 @@ const LandingPage: React.FC = () => {
                   // Re-enable after a short delay
                   setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
-                onTouchStart={() => setIsNavigationActive(true)}
-                onTouchEnd={() => {
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsNavigationActive(true);
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
@@ -489,8 +501,14 @@ const LandingPage: React.FC = () => {
                     // Re-enable after a short delay
                     setTimeout(() => setIsNavigationActive(false), 1000);
                   }}
-                  onTouchStart={() => setIsNavigationActive(true)}
-                  onTouchEnd={() => {
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsNavigationActive(true);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     setTimeout(() => setIsNavigationActive(false), 1000);
                   }}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
