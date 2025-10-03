@@ -20,6 +20,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
+import { SuccessPopup } from './ui/SuccessPopup';
 import { airtableService, type BetaUserData } from '../services/airtableService';
 
 const PricingPage: React.FC = () => {
@@ -35,6 +36,7 @@ const PricingPage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -72,6 +74,7 @@ const PricingPage: React.FC = () => {
 
       // Success handling
       setIsSubmitted(true);
+      setShowSuccessPopup(true);
       setFormData({
         firstName: '',
         lastName: '',
@@ -80,9 +83,10 @@ const PricingPage: React.FC = () => {
         artType: ''
       });
       
+      // Reset form state after popup closes
       setTimeout(() => {
         setIsSubmitted(false);
-      }, 5000);
+      }, 1000);
 
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -569,6 +573,14 @@ const PricingPage: React.FC = () => {
           animation: float-delayed 8s ease-in-out infinite;
         }
       `}</style>
+      
+      {/* Success Popup */}
+      <SuccessPopup
+        isOpen={showSuccessPopup}
+        onClose={() => setShowSuccessPopup(false)}
+        userName={formData.firstName}
+        userEmail={formData.email}
+      />
     </div>
   );
 };

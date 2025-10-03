@@ -36,37 +36,11 @@ export const ContainerScroll = ({
   // For mobile, use EXACTLY the same values as desktop
   const rotateMobile = useTransform(scrollYProgress, [0, 0.3], [35, 0]);
   
-  // Debug: Log the rotation setup
-  React.useEffect(() => {
-    console.log(`🔧 SETUP - Mobile: ${isMobile}`);
-    console.log(`🔧 Desktop rotation: [35° → 0°] (tilted → flat)`);
-    console.log(`🔧 Mobile rotation: [35° → 0°] (SAME AS DESKTOP)`);
-  }, [isMobile]);
   
   const rotate = isMobile ? rotateMobile : rotateDesktop;
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  // Debug: Log detailed rotation behavior
-  React.useEffect(() => {
-    const unsubscribeScroll = scrollYProgress.on("change", (latest) => {
-      console.log(`📊 Scroll: ${latest.toFixed(3)} | Mobile: ${isMobile}`);
-    });
-    
-    const unsubscribeRotate = rotate.on("change", (latest) => {
-      const direction = isMobile ? "MOBILE" : "DESKTOP";
-      console.log(`🔄 ${direction} Rotation: ${latest.toFixed(1)}°`);
-      
-      // Log start and end states
-      if (latest > 30) console.log(`🎬 ${direction} START: ${latest.toFixed(1)}° (should be tilted)`);
-      if (latest < 5 && latest > -5) console.log(`🏁 ${direction} END: ${latest.toFixed(1)}° (should be flat)`);
-    });
-    
-    return () => {
-      unsubscribeScroll();
-      unsubscribeRotate();
-    };
-  }, [scrollYProgress, rotate, isMobile]);
 
   return (
     <div

@@ -29,12 +29,31 @@ class AirtableService {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
         console.error('Netlify Function Error:', errorData);
         throw new Error(`HTTP error! status: ${response.status} - ${errorData.error || 'Unknown error'}`);
       }
 
-      const result = await response.json();
+      // Check if response has content before parsing JSON
+      const responseText = await response.text();
+      if (!responseText) {
+        throw new Error('Empty response from server');
+      }
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError);
+        console.error('Response text:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
+
       console.log('Successfully submitted via Netlify function:', result.message);
       return true;
 

@@ -12,6 +12,10 @@ This project uses Airtable to store beta user registrations from both the homepa
 AIRTABLE_API_KEY=your_airtable_api_key_here
 AIRTABLE_BASE_ID=your_airtable_base_id_here
 AIRTABLE_TABLE_NAME=your_airtable_table_name_here
+
+# ConvertKit Configuration (Server-side only)
+CONVERTKIT_API_KEY=your_convertkit_api_key_here
+CONVERTKIT_SEQUENCE_ID=your_sequence_id_here
 ```
 
 **Important**: These variables are now server-side only and will NOT be exposed to the client.

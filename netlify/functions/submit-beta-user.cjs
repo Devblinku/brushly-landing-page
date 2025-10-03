@@ -1,4 +1,10 @@
 exports.handler = async (event, context) => {
+  console.log('Airtable Function - Request received:', {
+    method: event.httpMethod,
+    path: event.path,
+    body: event.body ? 'present' : 'empty'
+  });
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
@@ -66,7 +72,7 @@ exports.handler = async (event, context) => {
     }
 
     // Prepare Airtable fields
-    const fields = {
+    const airtableFields = {
       "fldDPM6QejGFJFByl": userData.firstName, // First Name
       "fldENlHz6yCYtP8U4": userData.phone,     // Phone Number
       "fldCDA50S9gdyIsu0": userData.email,     // Email Address
@@ -76,21 +82,23 @@ exports.handler = async (event, context) => {
     // Make request to Airtable
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`;
     
-    const response = await fetch(airtableUrl, {
+    console.log('Airtable - Making request to:', airtableUrl);
+    const airtableResponse = await fetch(airtableUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fields })
+      body: JSON.stringify({ fields: airtableFields })
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
+    // Handle Airtable response
+    if (!airtableResponse.ok) {
+      const errorData = await airtableResponse.json();
       console.error('Airtable API Error:', errorData);
       
       return {
-        statusCode: response.status,
+        statusCode: airtableResponse.status,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
@@ -102,8 +110,8 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const result = await response.json();
-    console.log('Successfully submitted to Airtable:', result.id);
+    const airtableResult = await airtableResponse.json();
+    console.log('Successfully submitted to Airtable:', airtableResult.id);
 
     return {
       statusCode: 200,
@@ -113,8 +121,9 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({ 
         success: true,
-        id: result.id,
-        message: 'Successfully submitted to beta waitlist'
+        airtable: 'success',
+        recordId: airtableResult.id,
+        message: 'Successfully submitted to Airtable'
       })
     };
 
