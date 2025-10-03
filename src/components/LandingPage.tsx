@@ -46,6 +46,7 @@ const LandingPage: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
   const [isFormHovered, setIsFormHovered] = React.useState(false);
+  const [isNavigationActive, setIsNavigationActive] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -289,7 +290,7 @@ const LandingPage: React.FC = () => {
         backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
         transparent={true}
         intensity={0.8}
-        disabled={isFormHovered}
+        disabled={isFormHovered || isNavigationActive}
       />
 
       {/* Main Content */}
@@ -373,7 +374,16 @@ const LandingPage: React.FC = () => {
             <div className="relative overflow-y-hidden h-[30rem] md:h-[42rem]">
               {/* Navigation Arrows */}
               <button
-                onClick={prevSlide}
+                onClick={() => {
+                  setIsNavigationActive(true);
+                  prevSlide();
+                  // Re-enable after a short delay
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
+                onTouchStart={() => setIsNavigationActive(true)}
+                onTouchEnd={() => {
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
                 aria-label="Previous slide"
               >
@@ -381,7 +391,16 @@ const LandingPage: React.FC = () => {
               </button>
               
               <button
-                onClick={nextSlide}
+                onClick={() => {
+                  setIsNavigationActive(true);
+                  nextSlide();
+                  // Re-enable after a short delay
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
+                onTouchStart={() => setIsNavigationActive(true)}
+                onTouchEnd={() => {
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
                 aria-label="Next slide"
               >
@@ -464,7 +483,16 @@ const LandingPage: React.FC = () => {
               {canvasFeatures.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => scrollToSlide(index)}
+                  onClick={() => {
+                    setIsNavigationActive(true);
+                    scrollToSlide(index);
+                    // Re-enable after a short delay
+                    setTimeout(() => setIsNavigationActive(false), 1000);
+                  }}
+                  onTouchStart={() => setIsNavigationActive(true)}
+                  onTouchEnd={() => {
+                    setTimeout(() => setIsNavigationActive(false), 1000);
+                  }}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     currentSlide === index 
                       ? 'bg-teal-400 shadow-lg shadow-teal-400/50' 

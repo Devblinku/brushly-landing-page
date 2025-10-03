@@ -85,7 +85,7 @@ export default function SmokeyCursor({
       // When disabling, wait a bit to let current animation complete
       animationTimeoutRef.current = setTimeout(() => {
         disabledRef.current = true;
-      }, 500); // 500ms delay to let animation finish
+      }, 750); // 750ms delay to let animation finish
     } else {
       // When enabling, do it immediately
       if (animationTimeoutRef.current) {

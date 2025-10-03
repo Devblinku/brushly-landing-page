@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import SmokeyCursor from './ui/SmokeyCursor';
 import { 
   Mail, 
-  Phone, 
   MapPin, 
   Clock, 
   Send, 
@@ -42,22 +41,44 @@ const ContactUs: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+    try {
+      // Submit contact form via Netlify function
+      const response = await fetch('/.netlify/functions/contact-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
-    }, 3000);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Contact Form Error:', errorData);
+        throw new Error(`Contact form error! status: ${response.status} - ${errorData.error || 'Unknown error'}`);
+      }
+
+      const result = await response.json();
+      console.log('Successfully submitted contact form:', result.message);
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      setIsSubmitting(false);
+      alert('There was an error submitting the form. Please try again.');
+    }
   };
 
   const contactMethods = [
@@ -72,21 +93,12 @@ const ContactUs: React.FC = () => {
     },
     {
       icon: MessageSquare,
-      title: "Live Chat",
-      description: "Chat with our support team in real-time",
-      contact: "Available 9 AM - 6 PM EST",
-      responseTime: "Immediate response",
-      gradient: "from-green-500 to-emerald-400",
-      color: "green"
-    },
-    {
-      icon: Phone,
-      title: "Phone Support",
-      description: "Speak directly with our team",
-      contact: "+1 (555) 123-4567",
-      responseTime: "Business hours only",
-      gradient: "from-purple-500 to-pink-400",
-      color: "purple"
+      title: "Instagram DM Support",
+      description: "Get quick help via Instagram direct messages",
+      contact: "@brushly.art",
+      responseTime: "Usually within a few hours",
+      gradient: "from-pink-500 to-purple-400",
+      color: "pink"
     }
   ];
 
@@ -162,7 +174,7 @@ const ContactUs: React.FC = () => {
         {/* Contact Methods */}
         <section className="py-12 px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 animate-fade-in">
               {contactMethods.map((method, index) => {
                 const Icon = method.icon;
                 return (
@@ -207,8 +219,8 @@ const ContactUs: React.FC = () => {
                     <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6">
                       <CheckCircle className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-200 mb-4">Message Sent!</h3>
-                    <p className="text-slate-300">Thank you for reaching out. We'll get back to you within 24 hours.</p>
+                    <h3 className="text-2xl font-bold text-slate-200 mb-4">Message Sent Successfully!</h3>
+                    <p className="text-slate-300">Thank you for reaching out. We've received your message and will get back to you within 24 hours.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -303,8 +315,7 @@ const ContactUs: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <p className="text-slate-300 font-medium">Brushly Headquarters</p>
-                      <p className="text-slate-400">123 Creative District</p>
-                      <p className="text-slate-400">San Francisco, CA 94102</p>
+                      <p className="text-slate-400">Bridgewater, NJ 08807</p>
                       <p className="text-slate-400">United States</p>
                     </div>
                   </div>
