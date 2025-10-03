@@ -28,7 +28,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
 import { SuccessPopup } from './ui/SuccessPopup';
-import { airtableService, type BetaUserData } from '../services/airtableService';
+import { submitBetaUser, type BetaUserData } from '../services/airtableService';
 
 const LandingPage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -108,11 +108,6 @@ const LandingPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if Airtable service is configured
-      if (!airtableService.isConfigured()) {
-        throw new Error('Airtable service is not properly configured. Please check environment variables.');
-      }
-
       // Prepare data for submission
       const betaUserData: BetaUserData = {
         firstName: formData.firstName,
@@ -121,8 +116,8 @@ const LandingPage: React.FC = () => {
         artType: formData.artType
       };
 
-      // Submit to Airtable using service
-      await airtableService.submitBetaUser(betaUserData);
+      // Submit via Netlify function
+      await submitBetaUser(betaUserData);
 
       // Success handling
       setIsSubmitted(true);
@@ -279,21 +274,21 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
-          {/* Smokey Cursor Effect */}
-          <SmokeyCursor 
-            simulationResolution={256}
-            dyeResolution={1024}
-            densityDissipation={0.98}
-            velocityDissipation={0.99}
-            pressure={0.8}
-            curl={30}
-            splatRadius={0.25}
-            splatForce={6000}
-            backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
-            transparent={true}
-            intensity={0.8}
-          />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+      {/* Smokey Cursor Effect - KEEPING UNTOUCHED */}
+      <SmokeyCursor 
+        simulationResolution={256}
+        dyeResolution={1024}
+        densityDissipation={0.98}
+        velocityDissipation={0.99}
+        pressure={0.8}
+        curl={30}
+        splatRadius={0.25}
+        splatForce={6000}
+        backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
+        transparent={true}
+        intensity={0.8}
+      />
 
       {/* Main Content */}
       <div className="relative z-10">

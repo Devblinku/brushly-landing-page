@@ -1,9 +1,9 @@
-/* Import industry-standard responsive system */
-@import 'styles/responsive-system.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Import industry-standard responsive system */
+@import './responsive-system.css';
 
 /* Hide scrollbar for carousel */
 .scrollbar-hide {

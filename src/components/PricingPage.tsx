@@ -21,7 +21,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
 import { SuccessPopup } from './ui/SuccessPopup';
-import { airtableService, type BetaUserData } from '../services/airtableService';
+import { submitBetaUser, type BetaUserData } from '../services/airtableService';
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -56,11 +56,6 @@ const PricingPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if Airtable service is configured
-      if (!airtableService.isConfigured()) {
-        throw new Error('Airtable service is not properly configured. Please check environment variables.');
-      }
-
       // Prepare data for submission
       const betaUserData: BetaUserData = {
         firstName: formData.firstName,
@@ -69,8 +64,8 @@ const PricingPage: React.FC = () => {
         artType: formData.artType
       };
 
-      // Submit to Airtable using service
-      await airtableService.submitBetaUser(betaUserData);
+      // Submit via Netlify function
+      await submitBetaUser(betaUserData);
 
       // Success handling
       setIsSubmitted(true);

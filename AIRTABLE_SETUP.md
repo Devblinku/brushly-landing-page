@@ -15,7 +15,7 @@ AIRTABLE_TABLE_NAME=your_airtable_table_name_here
 
 # ConvertKit Configuration (Server-side only)
 CONVERTKIT_API_KEY=your_convertkit_api_key_here
-CONVERTKIT_SEQUENCE_ID=your_sequence_id_here
+CONVERTKIT_SEQUENCE_ID=your_convertkit_sequence_id_here
 ```
 
 **Important**: These variables are now server-side only and will NOT be exposed to the client.
@@ -37,6 +37,19 @@ CONVERTKIT_SEQUENCE_ID=your_sequence_id_here
 - Use the exact name of your table in Airtable
 - Case-sensitive (e.g., "Beta Users", "Waitlist", etc.)
 - Use as `AIRTABLE_TABLE_NAME`
+
+## Getting Your ConvertKit Credentials
+
+### 1. API Key
+- Go to [ConvertKit Account Settings](https://app.convertkit.com/account_settings/advanced_settings)
+- Generate an API key
+- Copy the key and use it as `CONVERTKIT_API_KEY`
+
+### 2. Sequence ID
+- Go to [ConvertKit Sequences](https://app.convertkit.com/sequences)
+- Create a new sequence or select an existing one
+- The sequence ID is in the URL: `https://app.convertkit.com/sequences/123456/edit`
+- Use the number (e.g., `123456`) as `CONVERTKIT_SEQUENCE_ID`
 
 ## Airtable Table Structure
 
