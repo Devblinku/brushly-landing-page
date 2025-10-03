@@ -317,7 +317,7 @@ const LandingPage: React.FC = () => {
         <GradientBarHeroSection />
 
         {/* Container Scroll Animation Section */}
-        <section className="py-4">
+        <section className="pt-48 pb-4 sm:pt-56 md:pt-64 lg:pt-16 xl:pt-20">
           <ContainerScroll
             titleComponent={
               <motion.div

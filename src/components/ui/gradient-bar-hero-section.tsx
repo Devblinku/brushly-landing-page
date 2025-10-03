@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Instagram } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 
@@ -45,6 +45,101 @@ const TrustElements: React.FC = () => {
   );
 };
 
+const CountdownTimer: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  useEffect(() => {
+    // Set target date (12 days from now)
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 12);
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
+
+      if (distance > 0) {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative z-10 w-full mb-4">
+      <div className="bg-slate-900/40 backdrop-blur-sm rounded-xl border border-cyan-400/20 p-3 sm:p-4">
+        <div className="text-center mb-3">
+          <h3 className="text-sm sm:text-base text-white font-semibold mb-1">
+            Limited Time Offer
+          </h3>
+          <p className="text-xs text-gray-300">
+            Early access expires in:
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
+              <div className="text-lg sm:text-xl font-bold text-white">
+                {timeLeft.days.toString().padStart(2, '0')}
+              </div>
+              <div className="text-xs text-white/80 font-medium">
+                Days
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
+              <div className="text-lg sm:text-xl font-bold text-white">
+                {timeLeft.hours.toString().padStart(2, '0')}
+              </div>
+              <div className="text-xs text-white/80 font-medium">
+                Hours
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
+              <div className="text-lg sm:text-xl font-bold text-white">
+                {timeLeft.minutes.toString().padStart(2, '0')}
+              </div>
+              <div className="text-xs text-white/80 font-medium">
+                Minutes
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
+              <div className="text-lg sm:text-xl font-bold text-white">
+                {timeLeft.seconds.toString().padStart(2, '0')}
+              </div>
+              <div className="text-xs text-white/80 font-medium">
+                Seconds
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const JoinWaitlistButton: React.FC = () => {
   const scrollToForm = () => {
     // First try to find a form element
@@ -69,9 +164,9 @@ const JoinWaitlistButton: React.FC = () => {
     <div className="relative z-10 w-full">
       <button
         onClick={scrollToForm}
-        className="px-8 sm:px-12 py-4 sm:py-5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-lg sm:text-xl font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
+        className="px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-base sm:text-lg font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
       >
-        Join The Waitlist
+        Join Waitlist
       </button>
     </div>
   );
@@ -82,12 +177,12 @@ const JoinWaitlistButton: React.FC = () => {
 export const GradientBarHeroSection: React.FC = () => {
   return (
     <AuroraBackground className="min-h-screen">
-      <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen pt-8 sm:pt-16 pb-4 sm:pb-6 px-6 sm:px-8 md:px-12">
-        <div className="mb-12 sm:mb-16 mt-16 sm:mt-20">
+      <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen pt-60 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 lg:pt-48 lg:pb-32 xl:pt-56 2xl:pt-64 px-6 sm:px-8 md:px-12">
+        <div className="mb-8 sm:mb-12 md:mb-16 lg:mb-8 mt-4 sm:mt-6 md:mt-8 lg:mt-10">
           <TrustElements />
         </div>
         
-        <h1 className="w-full text-white leading-tight tracking-tight mb-6 sm:mb-8 animate-fadeIn px-4">
+        <h1 className="w-full text-white leading-tight tracking-tight mb-6 sm:mb-8 md:mb-10 lg:mb-4 animate-fadeIn px-4">
           <span className="block font-inter font-medium text-[clamp(1.5rem,6vw,3.75rem)] whitespace-nowrap">
             From Studio to <span className="font-serif italic text-[clamp(2.2rem,8.5vw,5.5rem)]" style={{ fontFamily: 'Playfair Display, serif' }}>Spotlight</span>,
           </span>
@@ -96,7 +191,7 @@ export const GradientBarHeroSection: React.FC = () => {
           </span>
         </h1>
         
-        <div className="mb-6 sm:mb-10 px-4">
+        <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-4 px-4">
           <p className="text-[clamp(1rem,3vw,1.5rem)] text-gray-400 leading-relaxed animate-fadeIn animation-delay-200 font-space">
             Be the first to know when we launch.
           </p>
@@ -105,7 +200,8 @@ export const GradientBarHeroSection: React.FC = () => {
           </p>
         </div>
         
-        <div className="w-full max-w-2xl mb-6 sm:mb-8 px-4">
+        <div className="w-full max-w-2xl mb-8 sm:mb-10 md:mb-12 lg:mb-6 px-4">
+          <CountdownTimer />
           <JoinWaitlistButton />
         </div>
         
