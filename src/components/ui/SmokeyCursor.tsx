@@ -73,12 +73,35 @@ export default function SmokeyCursor({
   backgroundColor = { r: 0.5, g: 0, b: 0 },
   transparent = true,
   className = "",
+  disabled = false,
 }: SmokeyCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const disabledRef = useRef(disabled);
+  const animationTimeoutRef = useRef<number | null>(null);
+
+  // Update disabled ref when prop changes with delay for smooth transition
+  useEffect(() => {
+    if (disabled) {
+      // When disabling, wait a bit to let current animation complete
+      animationTimeoutRef.current = setTimeout(() => {
+        disabledRef.current = true;
+      }, 500); // 500ms delay to let animation finish
+    } else {
+      // When enabling, do it immediately
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+        animationTimeoutRef.current = null;
+      }
+      disabledRef.current = false;
+    }
+  }, [disabled]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return; // Guard canvas early
+    
+    // If disabled, don't initialize the cursor effect
+    if (disabled) return;
 
     // Pointer and config setup
     let pointers: Pointer[] = [pointerPrototype()];
@@ -1010,6 +1033,9 @@ export default function SmokeyCursor({
     let colorUpdateTimer = 0.0;
 
     function updateFrame() {
+      // Check if disabled before each frame
+      if (disabledRef.current) return;
+      
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1451,6 +1477,8 @@ export default function SmokeyCursor({
 
     // -------------------- Event Listeners --------------------
     window.addEventListener("mousedown", (e) => {
+      if (disabledRef.current) return;
+      
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1460,6 +1488,8 @@ export default function SmokeyCursor({
 
     // Start rendering on first mouse move
     function handleFirstMouseMove(e: MouseEvent) {
+      if (disabledRef.current) return;
+      
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1471,6 +1501,8 @@ export default function SmokeyCursor({
     document.body.addEventListener("mousemove", handleFirstMouseMove);
 
     window.addEventListener("mousemove", (e) => {
+      if (disabledRef.current) return;
+      
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1480,6 +1512,8 @@ export default function SmokeyCursor({
 
     // Start rendering on first touch
     function handleFirstTouchStart(e: TouchEvent) {
+      if (disabledRef.current) return;
+      
       const touches = e.targetTouches;
       const pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
@@ -1495,6 +1529,8 @@ export default function SmokeyCursor({
     window.addEventListener(
       "touchstart",
       (e) => {
+        if (disabledRef.current) return;
+        
         const touches = e.targetTouches;
         const pointer = pointers[0];
         for (let i = 0; i < touches.length; i++) {
@@ -1509,6 +1545,8 @@ export default function SmokeyCursor({
     window.addEventListener(
       "touchmove",
       (e) => {
+        if (disabledRef.current) return;
+        
         const touches = e.targetTouches;
         const pointer = pointers[0];
         for (let i = 0; i < touches.length; i++) {
@@ -1521,6 +1559,8 @@ export default function SmokeyCursor({
     );
 
     window.addEventListener("touchend", (e) => {
+      if (disabledRef.current) return;
+      
       const touches = e.changedTouches;
       const pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
@@ -1528,6 +1568,23 @@ export default function SmokeyCursor({
       }
     });
     // ------------------------------------------------------------
+    
+    // Cleanup function
+    return () => {
+      // Clear timeout if component unmounts
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+        animationTimeoutRef.current = null;
+      }
+      
+      // Clear the canvas when component unmounts or disabled
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+    };
   }, [
     simulationResolution,
     dyeResolution,
@@ -1543,7 +1600,27 @@ export default function SmokeyCursor({
     colorUpdateSpeed,
     backgroundColor,
     transparent,
+    disabled,
   ]);
+
+  // Clear canvas when disabled
+  useEffect(() => {
+    if (disabled && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+        animationTimeoutRef.current = null;
+      }
+    };
+  }, [disabled]);
 
   return (
     <div className={`fixed top-0 left-0 z-0 pointer-events-none w-full h-full ${className}`}>

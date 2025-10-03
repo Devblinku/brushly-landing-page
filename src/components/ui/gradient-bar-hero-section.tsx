@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Instagram } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 
@@ -45,61 +45,34 @@ const TrustElements: React.FC = () => {
   );
 };
 
-const WaitlistForm: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes('@')) return;
-
-    setIsSubmitting(true);
+const JoinWaitlistButton: React.FC = () => {
+  const scrollToForm = () => {
+    // First try to find a form element
+    const formElement = document.querySelector('form');
     
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      setEmail('');
-      
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 3000);
-    }, 1500);
+    if (formElement) {
+      // If we found a form, scroll to it
+      formElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else {
+      // Fallback: scroll to bottom of page
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
     <div className="relative z-10 w-full">
-      {!isSubmitted ? (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter Your Email"
-            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-slate-900/60 border border-cyan-400/30 focus:border-cyan-300 outline-none text-white text-sm sm:text-base shadow-[0_0_15px_rgba(34,211,238,0.2)] backdrop-blur-sm transition-all duration-300 font-space"
-            required
-          />
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`px-6 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 transform hover:scale-105 whitespace-nowrap text-sm sm:text-base font-space ${
-              isSubmitting 
-                ? 'bg-cyan-600 text-cyan-300 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white'
-            }`}
-          >
-            {isSubmitting ? (
-              <div className="h-4 w-4 sm:h-5 sm:w-5 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-            ) : (
-              'Join The Waitlist'
-            )}
-          </button>
-        </form>
-      ) : (
-        <div className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 rounded-full px-6 sm:px-8 py-3 sm:py-4 text-center animate-fadeIn text-sm sm:text-base font-space">
-          Thanks! We'll notify you when we launch.
-        </div>
-      )}
+      <button
+        onClick={scrollToForm}
+        className="px-8 sm:px-12 py-4 sm:py-5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-lg sm:text-xl font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
+      >
+        Join The Waitlist
+      </button>
     </div>
   );
 };
@@ -133,11 +106,11 @@ export const GradientBarHeroSection: React.FC = () => {
         </div>
         
         <div className="w-full max-w-2xl mb-6 sm:mb-8 px-4">
-          <WaitlistForm />
+          <JoinWaitlistButton />
         </div>
         
         <div className="flex justify-center items-center space-x-3">
-          <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
+          <a href="https://www.instagram.com/brushly.art/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
             <Instagram size={24} className="w-6 h-6" />
           </a>
           <span className="text-gray-300 text-sm font-space">Follow for exclusive behind-the-scenes magic ✨</span>

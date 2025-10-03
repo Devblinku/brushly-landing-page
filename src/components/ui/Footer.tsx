@@ -41,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
 
             {/* Social Links */}
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
+              <a href="https://www.instagram.com/brushly.art/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-slate-800/60 backdrop-blur-sm rounded-full flex items-center justify-center text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-all duration-300 group">
                 <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               </a>
             </div>

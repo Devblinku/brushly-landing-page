@@ -115,7 +115,24 @@ export const ModernHeader = () => {
                             </div>
                             <div className="flex w-full justify-center lg:justify-end">
                                 <RainbowButton
-                                    onClick={() => navigate('/auth')}
+                                    onClick={() => {
+                                        // First try to find a form element
+                                        const formElement = document.querySelector('form');
+                                        
+                                        if (formElement) {
+                                            // If we found a form, scroll to it
+                                            formElement.scrollIntoView({ 
+                                                behavior: 'smooth',
+                                                block: 'center'
+                                            });
+                                        } else {
+                                            // Fallback: scroll to bottom of page
+                                            window.scrollTo({
+                                                top: document.body.scrollHeight,
+                                                behavior: 'smooth'
+                                            });
+                                        }
+                                    }}
                                     className="text-white font-semibold"
                                 >
                                     Join Waitlist

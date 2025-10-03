@@ -45,6 +45,7 @@ const LandingPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
+  const [isFormHovered, setIsFormHovered] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -288,6 +289,7 @@ const LandingPage: React.FC = () => {
         backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
         transparent={true}
         intensity={0.8}
+        disabled={isFormHovered}
       />
 
       {/* Main Content */}
@@ -580,7 +582,9 @@ const LandingPage: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <div className="relative bg-slate-800/40 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl overflow-hidden">
+                <div 
+                  className="relative bg-slate-800/40 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 shadow-2xl overflow-hidden"
+                >
                   {/* Glow Effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-400/10 rounded-3xl"></div>
                   
@@ -667,6 +671,8 @@ const LandingPage: React.FC = () => {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              onMouseEnter={() => setIsFormHovered(true)}
+              onMouseLeave={() => setIsFormHovered(false)}
             >
               
               {/* Background Glow */}
@@ -700,7 +706,7 @@ const LandingPage: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-slate-200">Phone Number</Label>
+                      <Label htmlFor="phone" className="text-slate-200">Phone Number <span className="text-slate-400">(Optional)</span></Label>
                       <Input 
                         id="phone"
                         name="phone"
@@ -709,7 +715,6 @@ const LandingPage: React.FC = () => {
                         onChange={handleInputChange}
                         placeholder="Enter your phone number"
                         className="bg-slate-700/50 border-slate-600/50 text-slate-200 placeholder:text-slate-400 focus:border-teal-400"
-                        required
                       />
                     </div>
                   </div>
