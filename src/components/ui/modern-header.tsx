@@ -5,10 +5,9 @@ import { RainbowButton } from '@/components/ui/rainbow-button';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'Platforms', href: '#platforms' },
-    { name: 'Testimonials', href: '#testimonials' },
+    { name: 'Home', href: '/' },
     { name: 'Pricing', href: '/pricing' },
+    { name: 'Contact', href: '/contact' },
 ];
 
 const Logo = () => {

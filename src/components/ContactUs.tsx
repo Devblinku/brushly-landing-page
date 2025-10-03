@@ -28,6 +28,7 @@ const ContactUs: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFormHovered, setIsFormHovered] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -140,6 +141,7 @@ const ContactUs: React.FC = () => {
         backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
         transparent={true}
         intensity={0.8}
+        disabled={isFormHovered}
       />
 
       {/* Main Content */}
@@ -206,7 +208,11 @@ const ContactUs: React.FC = () => {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}
-              <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 shadow-xl">
+              <div 
+                className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 shadow-xl"
+                onMouseEnter={() => setIsFormHovered(true)}
+                onMouseLeave={() => setIsFormHovered(false)}
+              >
                 <div className="flex items-center space-x-4 mb-8">
                   <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg">
                     <Send className="w-6 h-6 text-white" />
