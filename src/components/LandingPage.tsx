@@ -283,7 +283,7 @@ const LandingPage: React.FC = () => {
     {
       name: "Elena Vasquez",
       role: "Contemporary Painter",
-      content: "The collector follow-up templates helped me build lasting relationships. My repeat sales have increased by 40%.",
+      content: "I was struggling with content, but Brushly's Social Media Reach tools are exactly what I needed. The AI-generated captions and Reel Hooks are saving me so much time.",
       rating: 5,
       image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=100&h=100&fit=crop&crop=face",
       metrics: "Repeat sales increased by 40%"

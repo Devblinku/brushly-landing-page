@@ -39,7 +39,7 @@ const TrustElements: React.FC = () => {
         ))}
       </div>
       <p className="text-white animate-fadeIn whitespace-nowrap font-space" style={{ animationDelay: '800ms' }}>
-        <span className="text-white font-semibold">2.4K</span> currently on the waitlist
+        <span className="text-white font-semibold">1.2K</span> currently on the waitlist
       </p>
     </div>
   );
