@@ -47,9 +47,24 @@ const LandingPage: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
   const [isFormHovered, setIsFormHovered] = React.useState(false);
   const [isNavigationActive, setIsNavigationActive] = React.useState(false);
+  const [isTouchActive, setIsTouchActive] = React.useState(false);
+  const [isFeatureCardsTouched, setIsFeatureCardsTouched] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Update current slide based on scroll position
@@ -290,7 +305,7 @@ const LandingPage: React.FC = () => {
         backgroundColor={{ r: 0.1, g: 0.1, b: 0.15 }}
         transparent={true}
         intensity={0.8}
-        disabled={isFormHovered || isNavigationActive}
+        disabled={isFormHovered || isNavigationActive || isTouchActive || (isMobile && isFeatureCardsTouched)}
       />
 
       {/* Main Content */}
@@ -343,7 +358,26 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* Canvas Features Section */}
-        <section id="features" className="py-20 px-6 relative">
+        <section 
+          id="features" 
+          className="py-20 px-6 relative"
+          onTouchStart={() => {
+            if (isMobile) {
+              setIsFeatureCardsTouched(true);
+            }
+          }}
+          onTouchEnd={() => {
+            if (isMobile) {
+              setTimeout(() => setIsFeatureCardsTouched(false), 1000);
+            }
+          }}
+          onTouchMove={(e) => {
+            if (isMobile) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }}
+        >
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <motion.div 
@@ -371,24 +405,49 @@ const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* Horizontal Carousel with Portrait Cards */}
-            <div className="relative overflow-y-hidden h-[30rem] md:h-[42rem]">
+            <div 
+              className="relative overflow-y-hidden h-[30rem] md:h-[42rem]"
+              onTouchStart={() => {
+                if (isMobile) {
+                  setIsFeatureCardsTouched(true);
+                }
+              }}
+              onTouchEnd={() => {
+                if (isMobile) {
+                  setTimeout(() => setIsFeatureCardsTouched(false), 1000);
+                }
+              }}
+              onTouchMove={(e) => {
+                if (isMobile) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }}
+            >
               {/* Navigation Arrows */}
               <button
                 onClick={() => {
-                  setIsNavigationActive(true);
                   prevSlide();
-                  // Re-enable after a short delay
-                  setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onMouseDown={() => {
                   setIsNavigationActive(true);
                 }}
-                onTouchEnd={(e) => {
+                onMouseUp={() => {
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
+                onTouchStart={() => {
+                  setIsNavigationActive(true);
+                  setIsTouchActive(true);
+                }}
+                onTouchEnd={() => {
+                  setTimeout(() => {
+                    setIsNavigationActive(false);
+                    setIsTouchActive(false);
+                  }, 1000);
+                }}
+                onTouchMove={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
                 aria-label="Previous slide"
@@ -398,20 +457,27 @@ const LandingPage: React.FC = () => {
               
               <button
                 onClick={() => {
-                  setIsNavigationActive(true);
                   nextSlide();
-                  // Re-enable after a short delay
-                  setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onMouseDown={() => {
                   setIsNavigationActive(true);
                 }}
-                onTouchEnd={(e) => {
+                onMouseUp={() => {
+                  setTimeout(() => setIsNavigationActive(false), 1000);
+                }}
+                onTouchStart={() => {
+                  setIsNavigationActive(true);
+                  setIsTouchActive(true);
+                }}
+                onTouchEnd={() => {
+                  setTimeout(() => {
+                    setIsNavigationActive(false);
+                    setIsTouchActive(false);
+                  }, 1000);
+                }}
+                onTouchMove={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setTimeout(() => setIsNavigationActive(false), 1000);
                 }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-full flex items-center justify-center text-white hover:bg-slate-700/80 transition-all duration-300 shadow-lg hover:scale-110"
                 aria-label="Next slide"
@@ -496,20 +562,27 @@ const LandingPage: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => {
-                    setIsNavigationActive(true);
                     scrollToSlide(index);
-                    // Re-enable after a short delay
-                    setTimeout(() => setIsNavigationActive(false), 1000);
                   }}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onMouseDown={() => {
                     setIsNavigationActive(true);
                   }}
-                  onTouchEnd={(e) => {
+                  onMouseUp={() => {
+                    setTimeout(() => setIsNavigationActive(false), 1000);
+                  }}
+                  onTouchStart={() => {
+                    setIsNavigationActive(true);
+                    setIsTouchActive(true);
+                  }}
+                  onTouchEnd={() => {
+                    setTimeout(() => {
+                      setIsNavigationActive(false);
+                      setIsTouchActive(false);
+                    }, 1000);
+                  }}
+                  onTouchMove={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setTimeout(() => setIsNavigationActive(false), 1000);
                   }}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     currentSlide === index 
