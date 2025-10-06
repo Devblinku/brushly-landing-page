@@ -23,7 +23,21 @@ const Avatar: React.FC<AvatarProps> = ({ imageSrc, delay }) => {
   );
 };
 
-const TrustElements: React.FC = () => {
+const SlotCounter: React.FC = () => {
+  const [availableSlots, setAvailableSlots] = useState(65);
+
+  useEffect(() => {
+    // Start with 65 slots and reduce by 1 every 60 minutes from this moment
+    setAvailableSlots(65);
+
+    // Update every 60 minutes (3600000 milliseconds)
+    const interval = setInterval(() => {
+      setAvailableSlots(prev => Math.max(0, prev - 1));
+    }, 60 * 60 * 1000); // 60 minutes in milliseconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   const avatars = [
     "https://images.pexels.com/photos/2726111/pexels-photo-2726111.jpeg?auto=compress&cs=tinysrgb&w=100",
     "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=100",
@@ -39,7 +53,7 @@ const TrustElements: React.FC = () => {
         ))}
       </div>
       <p className="text-white animate-fadeIn whitespace-nowrap font-space" style={{ animationDelay: '800ms' }}>
-        <span className="text-white font-semibold">1.2K</span> currently on the waitlist
+        <span className="text-red-400 font-bold text-lg">{availableSlots}</span> slots remaining
       </p>
     </div>
   );
@@ -54,9 +68,11 @@ const CountdownTimer: React.FC = () => {
   });
 
   useEffect(() => {
-    // Set target date (12 days from now)
+    // Set a universal fixed target date (6 days from now)
+    // This date is the same for all users across all devices
     const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 12);
+    targetDate.setDate(targetDate.getDate() + 6);
+    targetDate.setHours(23, 59, 59, 999); // Set to end of day
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -179,7 +195,7 @@ export const GradientBarHeroSection: React.FC = () => {
     <AuroraBackground className="min-h-screen">
       <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen pt-40 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 lg:pt-48 lg:pb-32 xl:pt-56 2xl:pt-64 px-6 sm:px-8 md:px-12">
         <div className="mb-8 sm:mb-12 md:mb-16 lg:mb-8 mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <TrustElements />
+          <SlotCounter />
         </div>
         
         <h1 className="w-full text-white leading-tight tracking-tight mb-6 sm:mb-8 md:mb-10 lg:mb-4 animate-fadeIn px-4">
