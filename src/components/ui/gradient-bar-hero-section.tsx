@@ -24,11 +24,11 @@ const Avatar: React.FC<AvatarProps> = ({ imageSrc, delay }) => {
 };
 
 const SlotCounter: React.FC = () => {
-  const [availableSlots, setAvailableSlots] = useState(65);
+  const [availableSlots, setAvailableSlots] = useState(52);
 
   useEffect(() => {
-    // Start with 65 slots and reduce by 1 every 60 minutes from this moment
-    setAvailableSlots(65);
+    // Start with 52 slots and reduce by 1 every 60 minutes from this moment
+    setAvailableSlots(52);
 
     // Update every 60 minutes (3600000 milliseconds)
     const interval = setInterval(() => {
