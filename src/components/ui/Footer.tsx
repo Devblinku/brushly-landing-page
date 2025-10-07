@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 interface FooterProps {
-  currentPage?: 'home' | 'pricing' | 'privacy' | 'terms' | 'contact';
+  currentPage?: 'home' | 'pricing' | 'privacy' | 'terms' | 'contact' | 'data-deletion';
 }
 
 export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
@@ -170,6 +170,23 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
                 >
                   <span>Terms of Service</span>
                   {currentPage === 'terms' ? (
+                    <div className="w-2 h-2 bg-teal-400 rounded-full ml-2"></div>
+                  ) : (
+                    <ArrowRight className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                  )}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => navigate('/data-deletion')}
+                  className={`transition-colors duration-300 flex items-center group ${
+                    currentPage === 'data-deletion' 
+                      ? 'text-teal-400 font-medium' 
+                      : 'text-slate-400 hover:text-teal-400'
+                  }`}
+                >
+                  <span>Data Deletion</span>
+                  {currentPage === 'data-deletion' ? (
                     <div className="w-2 h-2 bg-teal-400 rounded-full ml-2"></div>
                   ) : (
                     <ArrowRight className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
