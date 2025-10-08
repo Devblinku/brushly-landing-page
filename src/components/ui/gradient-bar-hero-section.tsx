@@ -24,11 +24,11 @@ const Avatar: React.FC<AvatarProps> = ({ imageSrc, delay }) => {
 };
 
 const SlotCounter: React.FC = () => {
-  const [availableSlots, setAvailableSlots] = useState(52);
+  const [availableSlots, setAvailableSlots] = useState(45);
 
   useEffect(() => {
-    // Start with 52 slots and reduce by 1 every 60 minutes from this moment
-    setAvailableSlots(52);
+    // Start with 45 slots and reduce by 1 every 60 minutes from this moment
+    setAvailableSlots(45);
 
     // Update every 60 minutes (3600000 milliseconds)
     const interval = setInterval(() => {
@@ -68,10 +68,10 @@ const CountdownTimer: React.FC = () => {
   });
 
   useEffect(() => {
-    // Set a universal fixed target date (6 days from now)
+    // Set a universal fixed target date (5 days from now)
     // This date is the same for all users across all devices
     const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 6);
+    targetDate.setDate(targetDate.getDate() + 5);
     targetDate.setHours(23, 59, 59, 999); // Set to end of day
 
     const timer = setInterval(() => {
