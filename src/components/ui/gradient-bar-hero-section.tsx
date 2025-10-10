@@ -24,11 +24,11 @@ const Avatar: React.FC<AvatarProps> = ({ imageSrc, delay }) => {
 };
 
 const SlotCounter: React.FC = () => {
-  const [availableSlots, setAvailableSlots] = useState(45);
+  const [availableSlots, setAvailableSlots] = useState(15);
 
   useEffect(() => {
-    // Start with 45 slots and reduce by 1 every 60 minutes from this moment
-    setAvailableSlots(45);
+    // Start with 15 slots and reduce by 1 every 60 minutes from this moment
+    setAvailableSlots(15);
 
     // Update every 60 minutes (3600000 milliseconds)
     const interval = setInterval(() => {
@@ -59,95 +59,26 @@ const SlotCounter: React.FC = () => {
   );
 };
 
-const CountdownTimer: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-
-  useEffect(() => {
-    // Set a universal fixed target date (5 days from now)
-    // This date is the same for all users across all devices
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 5);
-    targetDate.setHours(23, 59, 59, 999); // Set to end of day
-
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetDate.getTime() - now;
-
-      if (distance > 0) {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        setTimeLeft({ days, hours, minutes, seconds });
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
+const LaunchDate: React.FC = () => {
   return (
     <div className="relative z-10 w-full mb-4">
       <div className="bg-slate-900/40 backdrop-blur-sm rounded-xl border border-cyan-400/20 p-3 sm:p-4">
         <div className="text-center mb-3">
           <h3 className="text-sm sm:text-base text-white font-semibold mb-1">
-            Limited Time Offer
+            Official Launch
           </h3>
           <p className="text-xs text-gray-300">
-            Early access expires in:
+            Mark your calendar:
           </p>
         </div>
         
-        <div className="grid grid-cols-4 gap-2 sm:gap-3">
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
-              <div className="text-lg sm:text-xl font-bold text-white">
-                {timeLeft.days.toString().padStart(2, '0')}
-              </div>
-              <div className="text-xs text-white/80 font-medium">
-                Days
-              </div>
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-3 sm:p-4">
+            <div className="text-lg sm:text-xl font-bold text-white">
+              12 Oct 2025
             </div>
-          </div>
-          
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
-              <div className="text-lg sm:text-xl font-bold text-white">
-                {timeLeft.hours.toString().padStart(2, '0')}
-              </div>
-              <div className="text-xs text-white/80 font-medium">
-                Hours
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
-              <div className="text-lg sm:text-xl font-bold text-white">
-                {timeLeft.minutes.toString().padStart(2, '0')}
-              </div>
-              <div className="text-xs text-white/80 font-medium">
-                Minutes
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-2 sm:p-3">
-              <div className="text-lg sm:text-xl font-bold text-white">
-                {timeLeft.seconds.toString().padStart(2, '0')}
-              </div>
-              <div className="text-xs text-white/80 font-medium">
-                Seconds
-              </div>
+            <div className="text-xs text-white/80 font-medium">
+              Launch Date
             </div>
           </div>
         </div>
@@ -217,7 +148,7 @@ export const GradientBarHeroSection: React.FC = () => {
         </div>
         
         <div className="w-full max-w-2xl mb-8 sm:mb-10 md:mb-12 lg:mb-6 px-4">
-          <CountdownTimer />
+          <LaunchDate />
           <JoinWaitlistButton />
         </div>
         
