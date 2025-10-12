@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Instagram, Linkedin, Facebook } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { submitNewsletterSignup } from '../../services/airtableService';
@@ -101,6 +101,8 @@ const EmailInput: React.FC = () => {
 };
 
 const SubscribeNewsletterButton: React.FC = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubscribe = () => {
     // Find the form and trigger submission
     const formElement = document.querySelector('form');
@@ -110,13 +112,39 @@ const SubscribeNewsletterButton: React.FC = () => {
     }
   };
 
+  // Listen for form submission state changes
+  useEffect(() => {
+    const handleFormStateChange = () => {
+      const form = document.querySelector('form');
+      if (form) {
+        const input = form.querySelector('input[type="email"]') as HTMLInputElement;
+        if (input) {
+          setIsSubmitting(input.disabled);
+        }
+      }
+    };
+
+    // Check form state periodically
+    const interval = setInterval(handleFormStateChange, 100);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative z-10 w-full max-w-md mx-auto">
       <button
         onClick={handleSubscribe}
-        className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-sm font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
+        disabled={isSubmitting}
+        className="w-full px-2 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-base font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 min-h-[48px]"
       >
-        Subscribe to Newsletter
+        {isSubmitting ? (
+          <>
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <span>Subscribing...</span>
+          </>
+        ) : (
+          <span>Subscribe to Newsletter</span>
+        )}
       </button>
     </div>
   );
