@@ -171,10 +171,10 @@ export const GradientBarHeroSection: React.FC = () => {
         
         <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-4 px-4">
           <p className="text-[clamp(1rem,3vw,1.5rem)] text-gray-400 leading-relaxed animate-fadeIn animation-delay-200 font-space">
-            Be the first to know when we launch.
+            Be among the first to become part of this creative revolution.
           </p>
           <p className="text-[clamp(1rem,3vw,1.5rem)] text-gray-400 leading-relaxed animate-fadeIn animation-delay-300 font-space">
-            Join the waitlist and get exclusive early access.
+            Join thousands of artists already transforming their craft.
           </p>
         </div>
         
