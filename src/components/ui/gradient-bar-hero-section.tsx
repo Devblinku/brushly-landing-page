@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Instagram } from 'lucide-react';
+import React, { useState } from 'react';
+import { Instagram, Linkedin, Facebook } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
+import { submitNewsletterSignup } from '../../services/airtableService';
 
 type AvatarProps = {
   imageSrc: string;
@@ -23,21 +24,7 @@ const Avatar: React.FC<AvatarProps> = ({ imageSrc, delay }) => {
   );
 };
 
-const SlotCounter: React.FC = () => {
-  const [availableSlots, setAvailableSlots] = useState(15);
-
-  useEffect(() => {
-    // Start with 15 slots and reduce by 1 every 60 minutes from this moment
-    setAvailableSlots(15);
-
-    // Update every 60 minutes (3600000 milliseconds)
-    const interval = setInterval(() => {
-      setAvailableSlots(prev => Math.max(0, prev - 1));
-    }, 60 * 60 * 1000); // 60 minutes in milliseconds
-
-    return () => clearInterval(interval);
-  }, []);
-
+const ArtistCounter: React.FC = () => {
   const avatars = [
     "https://images.pexels.com/photos/2726111/pexels-photo-2726111.jpeg?auto=compress&cs=tinysrgb&w=100",
     "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=100",
@@ -53,67 +40,83 @@ const SlotCounter: React.FC = () => {
         ))}
       </div>
       <p className="text-white animate-fadeIn whitespace-nowrap font-space" style={{ animationDelay: '800ms' }}>
-        <span className="text-red-400 font-bold text-lg">{availableSlots}</span> slots remaining
+        <span className="text-cyan-400 font-bold text-lg">150+</span> Artists On Board
       </p>
     </div>
   );
 };
 
-const LaunchDate: React.FC = () => {
-  return (
-    <div className="relative z-10 w-full mb-4">
-      <div className="bg-slate-900/40 backdrop-blur-sm rounded-xl border border-cyan-400/20 p-3 sm:p-4">
-        <div className="text-center mb-3">
-          <h3 className="text-sm sm:text-base text-white font-semibold mb-1">
-            Official Launch
-          </h3>
-          <p className="text-xs text-gray-300">
-            Mark your calendar:
-          </p>
-        </div>
-        
-        <div className="text-center">
-          <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-md p-3 sm:p-4">
-            <div className="text-lg sm:text-xl font-bold text-white">
-              12 Oct 2025
-            </div>
-            <div className="text-xs text-white/80 font-medium">
-              Launch Date
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+const EmailInput: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-const JoinWaitlistButton: React.FC = () => {
-  const scrollToForm = () => {
-    // First try to find a form element
-    const formElement = document.querySelector('form');
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     
-    if (formElement) {
-      // If we found a form, scroll to it
-      formElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'center'
-      });
-    } else {
-      // Fallback: scroll to bottom of page
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth'
-      });
+    if (!email.trim()) return;
+    
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    
+    try {
+      await submitNewsletterSignup(email.trim());
+      setSubmitStatus('success');
+      setEmail(''); // Clear the form on success
+    } catch (error) {
+      console.error('Newsletter signup failed:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="relative z-10 w-full">
+    <div className="relative z-10 w-full mb-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md mx-auto">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          disabled={isSubmitting}
+          className="w-full px-4 py-3 bg-slate-800/50 border border-cyan-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 backdrop-blur-sm shadow-[0_0_20px_rgba(34,211,238,0.2)] focus:shadow-[0_0_30px_rgba(34,211,238,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          required
+        />
+        {submitStatus === 'success' && (
+          <p className="text-green-400 text-sm text-center animate-fadeIn">
+            ✓ Successfully subscribed to newsletter!
+          </p>
+        )}
+        {submitStatus === 'error' && (
+          <p className="text-red-400 text-sm text-center animate-fadeIn">
+            ✗ Failed to subscribe. Please try again.
+          </p>
+        )}
+        {/* Expose the submit function to parent component */}
+        <div style={{ display: 'none' }} data-submit-handler={handleSubmit} />
+      </form>
+    </div>
+  );
+};
+
+const SubscribeNewsletterButton: React.FC = () => {
+  const handleSubscribe = () => {
+    // Find the form and trigger submission
+    const formElement = document.querySelector('form');
+    if (formElement) {
+      // Trigger form submission
+      formElement.requestSubmit();
+    }
+  };
+
+  return (
+    <div className="relative z-10 w-full max-w-md mx-auto">
       <button
-        onClick={scrollToForm}
-        className="px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-base sm:text-lg font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
+        onClick={handleSubscribe}
+        className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white text-sm font-space transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
       >
-        Join Waitlist
+        Subscribe to Newsletter
       </button>
     </div>
   );
@@ -126,7 +129,7 @@ export const GradientBarHeroSection: React.FC = () => {
     <AuroraBackground className="min-h-screen">
       <div className="relative z-10 text-center w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen pt-40 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 lg:pt-48 lg:pb-32 xl:pt-56 2xl:pt-64 px-6 sm:px-8 md:px-12">
         <div className="mb-8 sm:mb-12 md:mb-16 lg:mb-8 mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <SlotCounter />
+          <ArtistCounter />
         </div>
         
         <h1 className="w-full text-white leading-tight tracking-tight mb-6 sm:mb-8 md:mb-10 lg:mb-4 animate-fadeIn px-4">
@@ -148,14 +151,22 @@ export const GradientBarHeroSection: React.FC = () => {
         </div>
         
         <div className="w-full max-w-2xl mb-8 sm:mb-10 md:mb-12 lg:mb-6 px-4">
-          <LaunchDate />
-          <JoinWaitlistButton />
+          <EmailInput />
+          <SubscribeNewsletterButton />
         </div>
         
-        <div className="flex justify-center items-center space-x-3">
-          <a href="https://www.instagram.com/brushly.art/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
-            <Instagram size={24} className="w-6 h-6" />
-          </a>
+        <div className="flex flex-col items-center space-y-3">
+          <div className="flex justify-center items-center space-x-4">
+            <a href="https://www.instagram.com/brushly.art/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
+              <Instagram size={24} className="w-6 h-6" />
+            </a>
+            <a href="https://www.linkedin.com/company/brushly-art/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
+              <Linkedin size={24} className="w-6 h-6" />
+            </a>
+            <a href="https://www.facebook.com/people/Brushlyart/61580406683452/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300">
+              <Facebook size={24} className="w-6 h-6" />
+            </a>
+          </div>
           <span className="text-gray-300 text-sm font-space">Follow for exclusive behind-the-scenes magic ✨</span>
         </div>
       </div>

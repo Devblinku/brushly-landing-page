@@ -61,4 +61,48 @@ export async function submitBetaUser(userData: BetaUserData): Promise<boolean> {
   }
 }
 
+/**
+ * Submit newsletter email to Airtable
+ * Uses hardcoded table name 'newsletter' with 'email' column
+ */
+export async function submitNewsletterSignup(email: string): Promise<boolean> {
+  try {
+    const response = await fetch('/.netlify/functions/newsletter-signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email })
+    });
+
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (jsonError) {
+        throw new Error(`Newsletter signup error! status: ${response.status} - Failed to parse error response`);
+      }
+      throw new Error(`Newsletter signup error! status: ${response.status} - ${errorData.error || 'Unknown error'}`);
+    }
+
+    // Check if response has content
+    const responseText = await response.text();
+    
+    if (!responseText) {
+      throw new Error('Empty response from newsletter signup function');
+    }
+
+    try {
+      JSON.parse(responseText);
+    } catch (jsonError) {
+      throw new Error('Invalid JSON response from newsletter signup function');
+    }
+
+    return true;
+
+  } catch (error) {
+    throw error;
+  }
+}
+
 export type { BetaUserData };

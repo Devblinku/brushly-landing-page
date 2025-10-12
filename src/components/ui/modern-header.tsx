@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { RainbowButton } from '@/components/ui/rainbow-button';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
@@ -113,29 +112,14 @@ export const ModernHeader = () => {
                                 </ul>
                             </div>
                             <div className="flex w-full justify-center lg:justify-end">
-                                <RainbowButton
-                                    onClick={() => {
-                                        // First try to find a form element
-                                        const formElement = document.querySelector('form');
-                                        
-                                        if (formElement) {
-                                            // If we found a form, scroll to it
-                                            formElement.scrollIntoView({ 
-                                                behavior: 'smooth',
-                                                block: 'center'
-                                            });
-                                        } else {
-                                            // Fallback: scroll to bottom of page
-                                            window.scrollTo({
-                                                top: document.body.scrollHeight,
-                                                behavior: 'smooth'
-                                            });
-                                        }
-                                    }}
-                                    className="text-white font-semibold"
+                                <a
+                                    href="https://app.brushly.art/app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-6 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
                                 >
-                                    Join Waitlist
-                                </RainbowButton>
+                                    Sign In
+                                </a>
                             </div>
                         </div>
                     </div>
