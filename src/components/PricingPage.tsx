@@ -377,10 +377,10 @@ const PricingPage: React.FC = () => {
                 <h3 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
                   <span className="text-slate-200">Join</span>
                   <br className="lg:hidden" />
-                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Exclusive Beta Waitlist</span>
+                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Brushly Revolution</span>
                 </h3>
                 <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                  Join our waitlist and get early access to special launch pricing, plus exclusive beta features.
+                  Get early access to special launch pricing, plus exclusive beta features.
                 </p>
               </div>
 

@@ -801,7 +801,7 @@ const LandingPage: React.FC = () => {
                 <h2 className="text-3xl lg:text-5xl font-bold mb-8 leading-tight">
                   <span className="text-slate-200">Join</span>
                   <br className="lg:hidden" />
-                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Exclusive Beta Waitlist</span>
+                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Brushly Revolution</span>
                 </h2>
                 <p className="text-xl text-slate-300 leading-relaxed">
                   Be among the first artists to experience the future of AI-powered content creation. 
