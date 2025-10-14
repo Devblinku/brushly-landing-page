@@ -880,7 +880,7 @@ const LandingPage: React.FC = () => {
                       ) : (
                         <>
                           <Sparkles className="w-6 h-6 mr-3" />
-                          Join Beta Program
+                          Get Instant Access on e-mail
                         </>
                       )}
                     </Button>

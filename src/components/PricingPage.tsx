@@ -455,7 +455,7 @@ const PricingPage: React.FC = () => {
                       ) : (
                         <>
                           <Mail className="w-6 h-6 mr-3" />
-                          Get Early Access
+                          Get Instant Access on e-mail
                         </>
                       )}
                     </Button>
