@@ -798,10 +798,10 @@ const LandingPage: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-400/5 rounded-3xl pointer-events-none"></div>
               
               <div className="relative z-10 text-center mb-12">
-                <h2 className="text-3xl lg:text-5xl font-bold mb-8 leading-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-8 leading-tight">
                   <span className="text-slate-200">Join</span>
                   <br className="lg:hidden" />
-                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Brushly Revolution</span>
+                  <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent font-serif italic text-3xl sm:text-4xl lg:font-sans lg:not-italic lg:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}> the Brushly Revolution</span>
                 </h2>
                 <p className="text-xl text-slate-300 leading-relaxed">
                   Be among the first artists to experience the future of AI-powered content creation. 
@@ -870,7 +870,7 @@ const LandingPage: React.FC = () => {
                       type="submit"
                       size="lg"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gradient-to-r from-teal-500 to-cyan-400 text-white hover:from-teal-600 hover:to-cyan-500 shadow-2xl shadow-teal-500/25 hover:shadow-teal-500/40 text-sm sm:text-lg lg:text-xl font-bold py-6 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>
