@@ -121,7 +121,7 @@ const DemoLeadPage: React.FC = () => {
                     <Calendar className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-white">When: November 30, 2025</p>
+                    <p className="text-lg font-semibold text-white">When: October 30, 2025</p>
                     <p className="text-gray-300">6:30 PM EST</p>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ const DemoLeadPage: React.FC = () => {
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-white">Duration: 60 minutes</p>
+                    <p className="text-lg font-semibold text-white">Duration: 45 minutes</p>
                     <p className="text-gray-300">Live Q&A included</p>
                   </div>
                 </div>
@@ -304,7 +304,7 @@ const DemoLeadPage: React.FC = () => {
                 <div className="space-y-2 text-xs sm:text-sm text-slate-300">
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
-                    <span>Date: November 30, 2025</span>
+                    <span>Date: October 30, 2025</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
@@ -312,7 +312,7 @@ const DemoLeadPage: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
-                    <span>Duration: 60 minutes</span>
+                    <span>Duration: 45 minutes</span>
                   </div>
                 </div>
               </div>
