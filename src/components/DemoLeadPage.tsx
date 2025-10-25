@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Sparkles, CheckCircle, ArrowRight, X, Mail } from 'lucide-react';
 import { ModernHeader } from './ui/modern-header';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -256,10 +256,6 @@ const DemoLeadPage: React.FC = () => {
               <p className="text-lg text-gray-300 mb-6">
                 Limited spots available. Don't miss this exclusive opportunity to see Brushly in action.
               </p>
-              <div className="flex items-center justify-center space-x-2 text-teal-400">
-                <ArrowRight className="w-5 h-5" />
-                <span className="font-semibold">Join 150+ artists already on Brushly</span>
-              </div>
             </div>
           </div>
         </section>
@@ -268,13 +264,94 @@ const DemoLeadPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Success Popup */}
-      <SuccessPopup
-        isOpen={showSuccessPopup}
-        onClose={() => setShowSuccessPopup(false)}
-        userName={formData.name}
-        userEmail={formData.email}
-      />
+      {/* Demo Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 rounded-2xl border border-slate-600/50 shadow-2xl max-w-md w-full mx-4 relative overflow-hidden">
+            {/* Close button */}
+            <button
+              onClick={() => setShowSuccessPopup(false)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 bg-slate-600/50 hover:bg-slate-500/50 rounded-full flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4 text-slate-300" />
+            </button>
+
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-cyan-400/10 to-blue-500/10" />
+            
+            {/* Content */}
+            <div className="relative p-6 sm:p-8">
+              {/* Success icon */}
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              </div>
+
+              {/* Success message */}
+              <div className="text-center mb-6">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-3">
+                  Thank you for submitting the form! 🎨
+                </h3>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Check your inbox for demo link and session details.
+                </p>
+              </div>
+
+              {/* Demo details */}
+              <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-slate-600/30">
+                <div className="flex items-center space-x-3 mb-3">
+                  <Calendar className="w-5 h-5 text-teal-400" />
+                  <h4 className="text-slate-200 font-semibold text-sm">Demo Session Details</h4>
+                </div>
+                <div className="space-y-2 text-xs sm:text-sm text-slate-300">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
+                    <span>Date: November 30, 2025</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
+                    <span>Time: 6:30 PM EST</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
+                    <span>Duration: 60 minutes</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Email confirmation */}
+              <div className="mt-4 p-3 bg-slate-700/50 rounded-lg border border-slate-600/30">
+                <div className="flex items-center space-x-2 text-slate-300 text-xs sm:text-sm">
+                  <Mail className="w-4 h-4 text-teal-400" />
+                  <span>Confirmation sent to <span className="text-teal-400 font-medium">{formData.email}</span></span>
+                </div>
+              </div>
+
+              {/* Instagram Follow Button */}
+              <div className="mt-6">
+                <button
+                  onClick={() => window.open('https://www.instagram.com/brushly.art/', '_blank')}
+                  className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-3"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                  <span>Follow us on Instagram</span>
+                </button>
+              </div>
+
+              {/* Close button */}
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setShowSuccessPopup(false)}
+                  className="text-slate-400 hover:text-slate-300 text-sm underline transition-colors"
+                >
+                  Close this popup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
