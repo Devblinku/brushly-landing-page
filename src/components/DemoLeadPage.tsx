@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Sparkles, CheckCircle, ArrowRight, X, Mail } from 'lucide-react';
+import { Calendar, Clock, Sparkles, CheckCircle, X, Mail } from 'lucide-react';
 import { ModernHeader } from './ui/modern-header';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Footer } from './ui/Footer';
-import { SuccessPopup } from './ui/SuccessPopup';
 
 interface DemoRegistrationData {
   name: string;
