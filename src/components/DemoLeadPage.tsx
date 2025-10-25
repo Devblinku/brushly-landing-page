@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Sparkles, CheckCircle, X, Mail } from 'lucide-react';
+import { Calendar, Clock, Sparkles, CheckCircle, X } from 'lucide-react';
 import { ModernHeader } from './ui/modern-header';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -288,7 +288,7 @@ const DemoLeadPage: React.FC = () => {
               {/* Success message */}
               <div className="text-center mb-6">
                 <h3 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-3">
-                  Thank you for submitting the form! 🎨
+                  Thank you for submitting the form!
                 </h3>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                   Check your inbox for demo link and session details.
@@ -317,13 +317,6 @@ const DemoLeadPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Email confirmation */}
-              <div className="mt-4 p-3 bg-slate-700/50 rounded-lg border border-slate-600/30">
-                <div className="flex items-center space-x-2 text-slate-300 text-xs sm:text-sm">
-                  <Mail className="w-4 h-4 text-teal-400" />
-                  <span>Confirmation sent to <span className="text-teal-400 font-medium">{formData.email}</span></span>
-                </div>
-              </div>
 
               {/* Instagram Follow Button */}
               <div className="mt-6">
