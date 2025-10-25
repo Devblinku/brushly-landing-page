@@ -6,6 +6,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
 import ContactUs from './components/ContactUs';
 import DataDeletion from './components/DataDeletion';
+import DemoLeadPage from './components/DemoLeadPage';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/contact" element={<ContactUs />} />
       <Route path="/data-deletion" element={<DataDeletion />} />
+      <Route path="/demo" element={<DemoLeadPage />} />
     </Routes>
   );
 };

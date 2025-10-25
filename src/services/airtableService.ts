@@ -6,6 +6,12 @@ interface BetaUserData {
   artType: string;
 }
 
+interface DemoRegistrationData {
+  name: string;
+  email: string;
+  mobile?: string;
+}
+
 /**
  * Submit beta user data via Netlify functions
  * Step 1: Submit to Airtable
@@ -105,4 +111,35 @@ export async function submitNewsletterSignup(email: string): Promise<boolean> {
   }
 }
 
-export type { BetaUserData };
+/**
+ * Submit demo registration data via Netlify functions
+ * Submits to Airtable for demo registrations
+ */
+export async function submitDemoRegistration(registrationData: DemoRegistrationData): Promise<boolean> {
+  try {
+    const response = await fetch('/.netlify/functions/demo-registration', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(registrationData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Demo Registration Function Error:', errorData);
+      throw new Error(`Demo registration error! status: ${response.status} - ${errorData.error || 'Unknown error'}`);
+    }
+
+    const result = await response.json();
+    console.log('Successfully submitted demo registration:', result.message);
+
+    return true;
+
+  } catch (error) {
+    console.error('Error submitting demo registration:', error);
+    throw error;
+  }
+}
+
+export type { BetaUserData, DemoRegistrationData };
