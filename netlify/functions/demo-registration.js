@@ -135,13 +135,12 @@ exports.handler = async (event, context) => {
           const subscriberResult = await subscriberResponse.json();
           console.log('Successfully created ConvertKit subscriber:', subscriberResult.id);
 
-          // Add tag "demo1" to subscriber
+          // Add tag "demo1" to subscriber using correct API endpoint
           const tagData = {
-            email_address: email,
-            tags: ["demo1"]
+            email_address: email
           };
 
-          const tagResponse = await fetch('https://api.kit.com/v4/tags', {
+          const tagResponse = await fetch('https://api.kit.com/v4/tags/11975537/subscribers', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
