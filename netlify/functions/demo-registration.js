@@ -1,13 +1,4 @@
-const { Airtable } = require('airtable');
-
-// Initialize Airtable with API key from environment variables
-const airtable = new Airtable({
-  apiKey: process.env.AIRTABLE_API_KEY
-});
-
-// Get the base and table
-const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-const table = base('demo'); // Table name for demo registrations
+// No Airtable SDK import needed - using REST API like other functions
 
 exports.handler = async (event, context) => {
   // Set CORS headers
@@ -36,6 +27,25 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Get environment variables (same pattern as other functions)
+    const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+    const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+    // Hardcode table name as requested
+    const AIRTABLE_TABLE_NAME = 'demo';
+
+    // Validate environment variables
+    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+      console.error('Missing Airtable environment variables');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Server configuration error',
+          message: 'Missing required environment variables'
+        })
+      };
+    }
+
     // Parse the request body
     const { name, email, mobile } = JSON.parse(event.body);
 
@@ -62,18 +72,43 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Prepare data for Airtable
-    const recordData = {
+    // Prepare Airtable fields (same pattern as other functions)
+    const airtableFields = {
       'Name': name,
       'email': email,
       'batch': 'demo1',
       'phoneno': mobile || ''
     };
 
-    // Create record in Airtable
-    const record = await table.create(recordData);
+    // Make Airtable API call (same pattern as other functions)
+    const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`;
+    
+    const airtableResponse = await fetch(airtableUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fields: airtableFields })
+    });
 
-    console.log('Demo registration created:', record.id);
+    // Handle Airtable response
+    if (!airtableResponse.ok) {
+      const errorData = await airtableResponse.json();
+      console.error('Airtable API Error:', errorData);
+      
+      return {
+        statusCode: airtableResponse.status,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Failed to submit to Airtable',
+          details: errorData
+        })
+      };
+    }
+
+    const airtableResult = await airtableResponse.json();
+    console.log('Successfully submitted to Airtable:', airtableResult.id);
 
     // Step 2: Subscribe to ConvertKit and add tag
     try {
@@ -135,8 +170,9 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
-        message: 'Demo registration successful',
-        recordId: record.id
+        success: true,
+        airtable: 'success',
+        message: 'Demo registration successful'
       })
     };
 
