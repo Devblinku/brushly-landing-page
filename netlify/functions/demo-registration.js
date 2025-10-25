@@ -7,7 +7,7 @@ const airtable = new Airtable({
 
 // Get the base and table
 const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-const table = base('Demo Registrations'); // Table name for demo registrations
+const table = base('demo'); // Table name for demo registrations
 
 exports.handler = async (event, context) => {
   // Set CORS headers
@@ -65,10 +65,9 @@ exports.handler = async (event, context) => {
     // Prepare data for Airtable
     const recordData = {
       'Name': name,
-      'Email': email,
-      'Mobile': mobile || '',
-      'Registration Date': new Date().toISOString(),
-      'Status': 'Registered'
+      'email': email,
+      'batch': 'demo1',
+      'phoneno': mobile || ''
     };
 
     // Create record in Airtable

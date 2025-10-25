@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 interface FooterProps {
-  currentPage?: 'home' | 'pricing' | 'privacy' | 'terms' | 'contact' | 'data-deletion';
+  currentPage?: 'home' | 'pricing' | 'privacy' | 'terms' | 'contact' | 'data-deletion' | 'demo';
 }
 
 export const Footer: React.FC<FooterProps> = ({ currentPage = 'home' }) => {
