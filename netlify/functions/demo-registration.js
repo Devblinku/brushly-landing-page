@@ -123,11 +123,6 @@ exports.handler = async (event, context) => {
           trigger_automation: true
         };
 
-        // Add phone number if available
-        if (mobile && mobile.trim()) {
-          senderData.phone = mobile.trim();
-        }
-
         const senderResponse = await fetch('https://api.sender.net/v2/subscribers', {
           method: 'POST',
           headers: {
