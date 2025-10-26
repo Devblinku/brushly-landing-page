@@ -110,41 +110,43 @@ exports.handler = async (event, context) => {
     const airtableResult = await airtableResponse.json();
     console.log('Successfully submitted to Airtable:', airtableResult.id);
 
-    // Step 2: Subscribe to Sender.net
+    // Step 2: Subscribe to Brevo
     try {
-      const SENDER_API_KEY = process.env.SENDER_API_KEY;
+      const BREVO_API_KEY = process.env.BREVO_API_KEY;
       
-      if (SENDER_API_KEY) {
-        // Prepare data for Sender.net
-        const senderData = {
+      if (BREVO_API_KEY) {
+        // Prepare data for Brevo
+        const brevoData = {
           email: email,
-          firstname: name,
-          groups: ["enJX3p"],
-          trigger_automation: true
+          attributes: {
+            FIRSTNAME: name
+          },
+          listIds: [5],
+          updateEnabled: false
         };
 
-        const senderResponse = await fetch('https://api.sender.net/v2/subscribers', {
+        const brevoResponse = await fetch('https://api.brevo.com/v3/contacts', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${SENDER_API_KEY}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'accept': 'application/json',
+            'api-key': BREVO_API_KEY,
+            'content-type': 'application/json'
           },
-          body: JSON.stringify(senderData)
+          body: JSON.stringify(brevoData)
         });
 
-        if (senderResponse.ok) {
-          const senderResult = await senderResponse.json();
-          console.log('Successfully created Sender.net subscriber:', senderResult);
+        if (brevoResponse.ok) {
+          const brevoResult = await brevoResponse.json();
+          console.log('Successfully created Brevo contact:', brevoResult);
         } else {
-          console.error('Failed to create Sender.net subscriber:', await senderResponse.text());
+          console.error('Failed to create Brevo contact:', await brevoResponse.text());
         }
       } else {
-        console.log('Sender.net API key not found, skipping Sender.net integration');
+        console.log('Brevo API key not found, skipping Brevo integration');
       }
-    } catch (senderError) {
-      console.error('Sender.net integration error:', senderError);
-      // Don't fail the entire request if Sender.net fails
+    } catch (brevoError) {
+      console.error('Brevo integration error:', brevoError);
+      // Don't fail the entire request if Brevo fails
     }
 
     return {
