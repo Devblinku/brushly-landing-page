@@ -110,59 +110,46 @@ exports.handler = async (event, context) => {
     const airtableResult = await airtableResponse.json();
     console.log('Successfully submitted to Airtable:', airtableResult.id);
 
-    // Step 2: Subscribe to ConvertKit and add tag
+    // Step 2: Subscribe to Sender.net
     try {
-      const CONVERTKIT_API_KEY = process.env.CONVERTKIT_API_KEY;
+      const SENDER_API_KEY = process.env.SENDER_API_KEY;
       
-      if (CONVERTKIT_API_KEY) {
-        // Create subscriber in ConvertKit
-        const subscriberData = {
-          first_name: name,
-          email_address: email,
-          state: "active"
+      if (SENDER_API_KEY) {
+        // Prepare data for Sender.net
+        const senderData = {
+          email: email,
+          firstname: name,
+          groups: ["enJX3p"],
+          trigger_automation: true
         };
 
-        const subscriberResponse = await fetch('https://api.kit.com/v4/subscribers', {
+        // Add phone number if available
+        if (mobile && mobile.trim()) {
+          senderData.phone = mobile.trim();
+        }
+
+        const senderResponse = await fetch('https://api.sender.net/v2/subscribers', {
           method: 'POST',
           headers: {
+            'Authorization': `Bearer ${SENDER_API_KEY}`,
             'Content-Type': 'application/json',
-            'X-Kit-Api-Key': CONVERTKIT_API_KEY
+            'Accept': 'application/json'
           },
-          body: JSON.stringify(subscriberData)
+          body: JSON.stringify(senderData)
         });
 
-        if (subscriberResponse.ok) {
-          const subscriberResult = await subscriberResponse.json();
-          console.log('Successfully created ConvertKit subscriber:', subscriberResult.id);
-
-          // Add tag "demo1" to subscriber using correct API endpoint
-          const tagData = {
-            email_address: email
-          };
-
-          const tagResponse = await fetch('https://api.kit.com/v4/tags/11975537/subscribers', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Kit-Api-Key': CONVERTKIT_API_KEY
-            },
-            body: JSON.stringify(tagData)
-          });
-
-          if (tagResponse.ok) {
-            console.log('Successfully added demo1 tag to subscriber');
-          } else {
-            console.error('Failed to add tag to subscriber:', await tagResponse.text());
-          }
+        if (senderResponse.ok) {
+          const senderResult = await senderResponse.json();
+          console.log('Successfully created Sender.net subscriber:', senderResult);
         } else {
-          console.error('Failed to create ConvertKit subscriber:', await subscriberResponse.text());
+          console.error('Failed to create Sender.net subscriber:', await senderResponse.text());
         }
       } else {
-        console.log('ConvertKit API key not found, skipping ConvertKit integration');
+        console.log('Sender.net API key not found, skipping Sender.net integration');
       }
-    } catch (convertkitError) {
-      console.error('ConvertKit integration error:', convertkitError);
-      // Don't fail the entire request if ConvertKit fails
+    } catch (senderError) {
+      console.error('Sender.net integration error:', senderError);
+      // Don't fail the entire request if Sender.net fails
     }
 
     return {
