@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { validateImageFile, getExistingImages } from '../../services/imageService';
-import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 interface ImageGalleryProps {
@@ -16,7 +15,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   isOpen,
   onClose,
   onSelectImage,
-  postSlug,
 }) => {
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);

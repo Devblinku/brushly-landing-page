@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   FileText,
   Folder,
   Tag,
-  Settings,
   LogOut,
   Menu,
   X,
-  Plus,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 

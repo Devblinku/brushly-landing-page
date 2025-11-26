@@ -29,7 +29,7 @@ export interface BlogPost {
   status: BlogPostStatus;
   author_id: string | null;
   category_id: string | null;
-  category?: BlogCategory; // Joined from category_id
+  category?: BlogCategory | null; // Joined from category_id
   tags?: BlogTag[]; // Joined from blog_post_tags
   published_at: string | null;
   meta_title: string | null;

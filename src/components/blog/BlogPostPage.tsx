@@ -10,7 +10,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { ModernHeader } from '../ui/modern-header';
 import { Footer } from '../ui/Footer';
-import { getPostBySlug, getRelatedPosts } from '../../services/blogService';
+import { getPostBySlug } from '../../services/blogService';
 import type { BlogPostWithRelations } from '../../types/blog';
 import { ShareButtons } from './ShareButtons';
 import { RelatedPosts } from './RelatedPosts';

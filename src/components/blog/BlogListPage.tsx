@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, X, ChevronDown } from 'lucide-react';
+import { Search, X, ChevronDown } from 'lucide-react';
 import { ModernHeader } from '../ui/modern-header';
 import { Footer } from '../ui/Footer';
 import { BlogCard } from './BlogCard';

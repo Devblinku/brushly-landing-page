@@ -125,7 +125,10 @@ const TagManager: React.FC = () => {
             </p>
             {!searchQuery && (
               <Button
-                onClick={() => document.querySelector('input[placeholder="Tag name"]')?.focus()}
+                onClick={() => {
+                  const input = document.querySelector('input[placeholder="Tag name"]') as HTMLInputElement;
+                  input?.focus();
+                }}
                 className="bg-cyan-500 hover:bg-cyan-600"
               >
                 <Plus className="w-4 h-4 mr-2" />

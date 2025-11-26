@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Eye, Search, Filter, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { getPosts, deletePost } from '../../services/blogService';
 import type { BlogPostWithRelations } from '../../types/blog';
-import { Button } from '../ui/button';
 
 const BlogList: React.FC = () => {
   const navigate = useNavigate();

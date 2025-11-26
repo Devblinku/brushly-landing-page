@@ -3,9 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Save,
-  Eye,
   ArrowLeft,
-  Upload,
   Image as ImageIcon,
   Youtube,
   Bold,
@@ -39,7 +37,6 @@ import {
 import { getAllCategories } from '../../services/categoryService';
 import { getAllTags, createOrGetTags } from '../../services/tagService';
 import {
-  uploadFeaturedImage,
   uploadImagesFromDataURLs,
   validateImageFile,
 } from '../../services/imageService';
@@ -48,7 +45,6 @@ import { useAuth } from '../auth/AuthContext';
 import { fileToDataURL, extractImageUrls, replaceImageUrls, isDataURL } from '../../utils/imageUtils';
 import ImageGallery from './ImageGallery';
 import type {
-  BlogPostWithRelations,
   BlogPostCreate,
   BlogPostUpdate,
 } from '../../types/blog';
@@ -84,7 +80,7 @@ const BlogEditor: React.FC = () => {
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editorState, setEditorState] = useState({});
+  const [, setEditorState] = useState({});
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [loadedContent, setLoadedContent] = useState<any>(null);
 
@@ -277,27 +273,6 @@ const BlogEditor: React.FC = () => {
     setShowImageGallery(false);
   }, [editor]);
 
-  const handleImageUpload = useCallback(async (file: File) => {
-    if (!editor) return;
-
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      alert(validation.error);
-      return;
-    }
-
-    try {
-      // Convert to data URL for temporary storage (won't upload until save)
-      const dataUrl = await fileToDataURL(file);
-      
-      // Insert image into editor with data URL
-      editor.chain().focus().setImage({ src: dataUrl }).run();
-      setShowImageGallery(false);
-    } catch (error) {
-      console.error('Error processing image:', error);
-      alert('Failed to process image. Please try again.');
-    }
-  }, [editor]);
 
   const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -388,9 +363,11 @@ const BlogEditor: React.FC = () => {
       if (!hasContent) {
         content = {
           type: 'doc',
+          attrs: {},
           content: [
             {
               type: 'paragraph',
+              attrs: {},
               content: []
             }
           ]

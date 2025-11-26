@@ -30,12 +30,8 @@ async function compressImage(file: File, maxWidth: number = MAX_WIDTH): Promise<
 /**
  * Generate a unique filename for the image
  */
-function generateImageFileName(postSlug: string, originalFileName: string, type: 'featured' | 'inline'): string {
+function generateImageFileName(postSlug: string, type: 'featured' | 'inline'): string {
   const timestamp = Date.now();
-  const extension = originalFileName.split('.').pop()?.toLowerCase() || 'webp';
-  const cleanFileName = originalFileName
-    .replace(/[^a-zA-Z0-9.-]/g, '-')
-    .toLowerCase();
   
   const year = new Date().getFullYear();
   const month = String(new Date().getMonth() + 1).padStart(2, '0');
@@ -83,7 +79,7 @@ export async function uploadFeaturedImage(
     const compressedFile = await compressImage(file, MAX_WIDTH);
     
     // Generate file path
-    const filePath = generateImageFileName(postSlug, file.name, 'featured');
+    const filePath = generateImageFileName(postSlug, 'featured');
     
     // Upload to storage
     const url = await uploadToStorage(compressedFile, filePath);
@@ -114,7 +110,7 @@ export async function uploadInlineImage(
     const compressedFile = await compressImage(file, MAX_WIDTH_INLINE);
     
     // Generate file path
-    const filePath = generateImageFileName(postSlug, file.name, 'inline');
+    const filePath = generateImageFileName(postSlug, 'inline');
     
     // Upload to storage
     const url = await uploadToStorage(compressedFile, filePath);
@@ -207,7 +203,7 @@ export async function uploadImagesFromDataURLs(
         
         // Compress and upload
         const compressedFile = await compressImage(file, MAX_WIDTH_INLINE);
-        const filePath = generateImageFileName(postSlug, filename, 'inline');
+        const filePath = generateImageFileName(postSlug, 'inline');
         const url = await uploadToStorage(compressedFile, filePath);
         
         urlMap[dataUrl] = url;

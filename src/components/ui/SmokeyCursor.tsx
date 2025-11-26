@@ -77,7 +77,7 @@ export default function SmokeyCursor({
 }: SmokeyCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const disabledRef = useRef(disabled);
-  const animationTimeoutRef = useRef<number | null>(null);
+  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Update disabled ref when prop changes with delay for smooth transition
   useEffect(() => {

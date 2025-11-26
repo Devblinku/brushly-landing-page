@@ -1,18 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { NodeViewWrapper } from '@tiptap/react';
+import { NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react';
 
-interface ResizableImageProps {
-  node: {
-    attrs: {
-      src: string;
-      alt?: string;
-      width?: number | string;
-      height?: number | string;
-    };
-  };
-  updateAttributes: (attrs: Record<string, any>) => void;
-  selected: boolean;
-}
+interface ResizableImageProps extends ReactNodeViewProps {}
 
 const ResizableImage: React.FC<ResizableImageProps> = ({
   node,
@@ -22,7 +11,12 @@ const ResizableImage: React.FC<ResizableImageProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const { src, alt, width, height } = node.attrs;
+  const { src, alt, width, height } = (node.attrs || {}) as {
+    src: string;
+    alt?: string;
+    width?: number | string;
+    height?: number | string;
+  };
 
   useEffect(() => {
     if (!imgRef.current) return;
@@ -90,8 +84,8 @@ const ResizableImage: React.FC<ResizableImageProps> = ({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const currentWidth = width ? (typeof width === 'number' ? width : parseInt(width)) : 'auto';
-  const currentHeight = height ? (typeof height === 'number' ? height : parseInt(height)) : 'auto';
+  const currentWidth = width ? (typeof width === 'number' ? width : parseInt(String(width))) : 'auto';
+  const currentHeight = height ? (typeof height === 'number' ? height : parseInt(String(height))) : 'auto';
 
   return (
     <NodeViewWrapper

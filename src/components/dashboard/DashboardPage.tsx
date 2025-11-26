@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FileText, Plus, Edit, Eye, BarChart3 } from 'lucide-react';
+import { FileText, Plus, Edit, Eye } from 'lucide-react';
 import { getPosts } from '../../services/blogService';
 import type { BlogPostWithRelations } from '../../types/blog';
 import { format } from 'date-fns';

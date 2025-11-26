@@ -1,6 +1,5 @@
 import { supabase } from './supabaseClient';
 import type {
-  BlogPost,
   BlogPostWithRelations,
   BlogPostCreate,
   BlogPostUpdate,
@@ -8,7 +7,6 @@ import type {
   BlogListResponse,
 } from '../types/blog';
 import { generateSlug } from './categoryService';
-import { createOrGetTags } from './tagService';
 
 /**
  * Calculate reading time from TipTap JSONB content
