@@ -1,0 +1,42 @@
+-- Create storage bucket for blog images
+-- Note: This bucket will be created as public, which allows anyone to read images
+-- Storage policies should be set up via Supabase Dashboard (Storage > Policies) or via the Supabase Management API
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('blog-images', 'blog-images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies cannot be created directly in migrations due to permission restrictions
+-- Please set up the following policies via Supabase Dashboard or use the Supabase Management API:
+--
+-- 1. Public Read Policy (SELECT):
+--    - Policy Name: "Blog images are publicly accessible"
+--    - Operation: SELECT
+--    - Target roles: anon, authenticated
+--    - Policy definition: bucket_id = 'blog-images'
+--
+-- 2. Authenticated Upload Policy (INSERT):
+--    - Policy Name: "Authenticated users can upload blog images"
+--    - Operation: INSERT
+--    - Target roles: authenticated
+--    - Policy definition: bucket_id = 'blog-images' AND auth.role() = 'authenticated'
+--
+-- 3. Authenticated Update Policy (UPDATE):
+--    - Policy Name: "Authenticated users can update blog images"
+--    - Operation: UPDATE
+--    - Target roles: authenticated
+--    - Policy definition: bucket_id = 'blog-images' AND auth.role() = 'authenticated'
+--
+-- 4. Authenticated Delete Policy (DELETE):
+--    - Policy Name: "Authenticated users can delete blog images"
+--    - Operation: DELETE
+--    - Target roles: authenticated
+--    - Policy definition: bucket_id = 'blog-images' AND auth.role() = 'authenticated'
+--
+-- To set up policies via Dashboard:
+-- 1. Go to Supabase Dashboard > Storage
+-- 2. Click on 'blog-images' bucket
+-- 3. Go to 'Policies' tab
+-- 4. Click 'New Policy' for each policy above
+--
+-- Alternatively, use the SQL Editor to run:
+-- (See STORAGE_POLICIES_SETUP.sql for the exact SQL commands)

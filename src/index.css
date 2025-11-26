@@ -202,10 +202,58 @@ select option:checked {
 .prose ol {
   margin: inherit;
   padding: inherit;
+  list-style-type: inherit !important;
 }
 
 .prose li {
   margin: inherit;
+  display: list-item !important;
+  list-style-type: inherit !important;
+}
+
+/* TipTap Editor specific styles to ensure lists and headings show properly */
+.editor-content ul,
+.editor-content ol,
+.ProseMirror ul,
+.ProseMirror ol {
+  list-style-position: outside !important;
+}
+
+.editor-content ul,
+.ProseMirror ul {
+  list-style-type: disc !important;
+}
+
+.editor-content ol,
+.ProseMirror ol {
+  list-style-type: decimal !important;
+}
+
+.editor-content li,
+.ProseMirror li {
+  display: list-item !important;
+}
+
+/* Blockquote styling for TipTap editor */
+.editor-content blockquote,
+.ProseMirror blockquote {
+  border-left: 4px solid rgb(34 211 238) !important;
+  padding-left: 1.5em !important;
+  padding-right: 1em !important;
+  padding-top: 0.5em !important;
+  padding-bottom: 0.5em !important;
+  margin: 1em 0 !important;
+  font-style: italic !important;
+  background-color: rgba(34, 211, 238, 0.05) !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  display: block !important;
+  color: rgb(203 213 225) !important;
+}
+
+.editor-content blockquote p,
+.ProseMirror blockquote p {
+  color: rgb(203 213 225) !important;
+  margin: 0.5em 0 !important;
 }
 
 .prose table {
