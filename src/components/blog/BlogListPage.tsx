@@ -8,6 +8,7 @@ import { getPosts } from '../../services/blogService';
 import { getAllCategories } from '../../services/categoryService';
 import type { BlogPostWithRelations, BlogCategory } from '../../types/blog';
 import { Button } from '../ui/button';
+import { BlogTimeTracker } from '../BlogTimeTracker';
 
 const BlogListPage: React.FC = () => {
   const [posts, setPosts] = useState<BlogPostWithRelations[]>([]);
@@ -78,6 +79,7 @@ const BlogListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700">
+      <BlogTimeTracker isBlogList={true} />
       <ModernHeader />
 
       <div className="pt-32 pb-20 px-6">

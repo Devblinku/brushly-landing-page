@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Instagram, Linkedin, Facebook } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { submitNewsletterSignup } from '../../services/airtableService';
+import posthog from '../../lib/posthog';
 
 type AvatarProps = {
   imageSrc: string;
@@ -50,6 +51,21 @@ const EmailInput: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const hasTrackedStartRef = useRef(false);
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    
+    // Track when user starts typing (only once)
+    if (newEmail.length > 0 && !hasTrackedStartRef.current) {
+      hasTrackedStartRef.current = true;
+      posthog.capture('newsletter_signup_started', {
+        source: 'hero_section',
+        page: window.location.pathname,
+      });
+    }
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -60,9 +76,27 @@ const EmailInput: React.FC = () => {
     setSubmitStatus('idle');
     
     try {
-      await submitNewsletterSignup(email.trim());
+      const emailValue = email.trim();
+      await submitNewsletterSignup(emailValue);
+      
+      // Track successful signup
+      posthog.capture('newsletter_signup_completed', {
+        email: emailValue,
+        source: 'hero_section',
+        page: window.location.pathname,
+      });
+      
+      // Identify user with PostHog
+      posthog.identify(emailValue, {
+        email: emailValue,
+        isNewsletterSubscriber: true,
+        signupSource: 'hero_section',
+        signupDate: new Date().toISOString(),
+      });
+      
       setSubmitStatus('success');
       setEmail(''); // Clear the form on success
+      hasTrackedStartRef.current = false; // Reset for next signup
     } catch (error) {
       console.error('Newsletter signup failed:', error);
       setSubmitStatus('error');
@@ -77,7 +111,7 @@ const EmailInput: React.FC = () => {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           placeholder="Enter your email"
           disabled={isSubmitting}
           className="w-full px-4 py-3 bg-slate-800/50 border border-cyan-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 backdrop-blur-sm shadow-[0_0_20px_rgba(34,211,238,0.2)] focus:shadow-[0_0_30px_rgba(34,211,238,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"

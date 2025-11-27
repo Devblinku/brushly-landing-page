@@ -14,6 +14,7 @@ import { getPostBySlug } from '../../services/blogService';
 import type { BlogPostWithRelations } from '../../types/blog';
 import { ShareButtons } from './ShareButtons';
 import { RelatedPosts } from './RelatedPosts';
+import { BlogTimeTracker } from '../BlogTimeTracker';
 
 const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -186,6 +187,14 @@ const BlogPostPage: React.FC = () => {
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700">
+        <BlogTimeTracker
+          postData={{
+            slug: post.slug,
+            title: post.title,
+            category: post.category?.name,
+            reading_time: post.reading_time,
+          }}
+        />
         <ModernHeader />
 
         <div className="pt-32 pb-20 px-6">

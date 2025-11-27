@@ -1,7 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import posthog from '../../lib/posthog';
 
 const menuItems = [
     { name: 'Home', href: '/' },
@@ -22,8 +23,27 @@ const Logo = () => {
 
 export const ModernHeader = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [menuState, setMenuState] = React.useState(false);
     const [isScrolled, setIsScrolled] = React.useState(false);
+    const pageLoadTimeRef = React.useRef<number>(Date.now());
+
+    // Reset page load time when route changes
+    React.useEffect(() => {
+        pageLoadTimeRef.current = Date.now();
+    }, [location.pathname]);
+
+    const handleSignInClick = () => {
+        const timeOnPage = Math.floor((Date.now() - pageLoadTimeRef.current) / 1000);
+        
+        posthog.capture('sign_in_button_clicked', {
+            source_page: location.pathname,
+            time_on_page_before_click: timeOnPage,
+            button_location: 'header',
+            destination: 'https://app.brushly.art/app',
+            $current_url: window.location.href,
+        });
+    };
 
     React.useEffect(() => {
         let ticking = false;
@@ -117,6 +137,7 @@ export const ModernHeader = () => {
                                     href="https://app.brushly.art/app"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={handleSignInClick}
                                     className="px-6 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-600 hover:to-teal-500 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-sm"
                                 >
                                     Sign In
