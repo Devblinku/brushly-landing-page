@@ -30,7 +30,7 @@ export const initPostHog = () => {
         defaults: '2025-05-24',
         person_profiles: 'always', // Create profiles for anonymous users as well
         capture_pageview: false, // We'll handle pageviews manually for SPA
-        capture_pageleave: true, // Enable pageleave tracking
+        capture_pageleave: true, // CRITICAL: Enable pageleave tracking for accurate bounce rate and session duration
         // Anonymous tracking is enabled by default - these settings ensure it works
         opt_out_capturing_by_default: false, // Allow anonymous tracking
         loaded: (posthog) => {
