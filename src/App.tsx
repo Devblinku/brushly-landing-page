@@ -9,6 +9,7 @@ import DataDeletion from './components/DataDeletion';
 import DemoLeadPage from './components/DemoLeadPage';
 import BlogListPage from './components/blog/BlogListPage';
 import BlogPostPage from './components/blog/BlogPostPage';
+import ArtistProfilePage from './components/artist/ArtistProfilePage';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import DashboardPage from './components/dashboard/DashboardPage';
 import BlogList from './components/dashboard/BlogList';
@@ -30,6 +31,7 @@ const App: React.FC = () => {
       <Route path="/data-deletion" element={<DataDeletion />} />
       <Route path="/demo" element={<DemoLeadPage />} />
       <Route path="/blog" element={<BlogListPage />} />
+      <Route path="/artists/:username" element={<ArtistProfilePage />} />
       
       {/* Auth Routes */}
       <Route path="/dashboard/login" element={<LoginPage />} />
