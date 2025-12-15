@@ -9,6 +9,11 @@ export interface ArtistProfile {
   public_profile_artworks: string[];
   public_profile_slug: string | null;
   public_profile_enabled: boolean;
+  public_profile_facebook_url?: string | null;
+  public_profile_instagram_url?: string | null;
+  public_profile_linkedin_url?: string | null;
+  public_profile_twitter_url?: string | null;
+  public_profile_tiktok_url?: string | null;
 }
 
 export interface Artwork {

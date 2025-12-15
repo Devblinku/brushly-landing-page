@@ -16,13 +16,13 @@
   [headers.values]
     Content-Type = "application/javascript"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
 [dev]
   command = "npm run dev"
   port = 8888
   targetPort = 5173
-  publish = "dist"
+
+[context.production]
+  [[context.production.redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200

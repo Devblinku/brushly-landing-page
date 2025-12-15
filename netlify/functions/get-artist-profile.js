@@ -123,7 +123,12 @@ exports.handler = async (event, context) => {
       public_profile_categories: userMetadata.public_profile_categories || [],
       public_profile_artworks: userMetadata.public_profile_artworks || [],
       public_profile_slug: userMetadata.public_profile_slug || slug,
-      public_profile_enabled: true
+      public_profile_enabled: true,
+      public_profile_facebook_url: userMetadata.public_profile_facebook_url || null,
+      public_profile_instagram_url: userMetadata.public_profile_instagram_url || null,
+      public_profile_linkedin_url: userMetadata.public_profile_linkedin_url || null,
+      public_profile_twitter_url: userMetadata.public_profile_twitter_url || null,
+      public_profile_tiktok_url: userMetadata.public_profile_tiktok_url || null
     };
 
     return {

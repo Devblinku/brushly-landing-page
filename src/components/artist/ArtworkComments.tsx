@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Send, Trash2, User } from 'lucide-react';
-import { fetchArtworkComments, createArtworkComment, deleteArtworkComment, type ArtworkComment } from '../../services/commentService';
+import {
+  fetchArtworkComments,
+  createArtworkComment,
+  deleteArtworkComment,
+  type ArtworkComment
+} from '../../services/commentService';
 import { useAuth } from '../auth/AuthContext';
 import { format } from 'date-fns';
 
@@ -16,6 +21,7 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
   const [commentText, setCommentText] = useState('');
   const [commenterName, setCommenterName] = useState('');
   const [commenterEmail, setCommenterEmail] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     loadComments();
@@ -35,18 +41,18 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!commentText.trim()) return;
-    if (!user && (!commenterName.trim() || !commenterEmail.trim())) return;
+    if (!user && !commenterName.trim()) return;
 
     setSubmitting(true);
     try {
       const newComment = await createArtworkComment({
         artwork_id: artworkId,
-        commenter_name: user 
+        commenter_name: user
           ? (user.user_metadata?.artist_display_name || user.email?.split('@')[0] || 'Anonymous')
           : commenterName.trim(),
-        commenter_email: user?.email || commenterEmail.trim(),
+        commenter_email: user?.email || commenterEmail.trim() || 'anonymous@brushly.art',
         comment_text: commentText.trim()
       });
 
@@ -54,7 +60,6 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
       setCommentText('');
       if (!user) {
         setCommenterName('');
-        setCommenterEmail('');
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -69,130 +74,111 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
 
     try {
       await deleteArtworkComment(commentId);
-      setComments(comments.filter(c => c.id !== commentId));
+      setComments(comments.filter((c) => c.id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
       alert('Failed to delete comment. Please try again.');
     }
   };
 
-  return (
-    <div className="mt-8 border-t border-border pt-8">
-      <div className="flex items-center gap-2 mb-6">
-        <MessageSquare className="w-5 h-5 text-primary" />
-        <h3 className="text-xl font-semibold text-foreground">
-          Comments ({comments.length})
-        </h3>
-      </div>
+  const toggleOpen = () => {
+    setIsOpen((prev) => !prev);
+  };
 
-      {/* Comment Form */}
-      <form onSubmit={handleSubmit} className="mb-8 space-y-4">
-        {!user && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="commenter-name" className="block text-sm font-medium text-foreground mb-2">
-                Name *
-              </label>
-              <input
-                id="commenter-name"
-                type="text"
-                value={commenterName}
-                onChange={(e) => setCommenterName(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label htmlFor="commenter-email" className="block text-sm font-medium text-foreground mb-2">
-                Email *
-              </label>
-              <input
-                id="commenter-email"
-                type="email"
-                value={commenterEmail}
-                onChange={(e) => setCommenterEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="your@email.com"
-              />
-            </div>
+  return (
+    <div className="flex flex-col h-full">
+      {/* Comments List */}
+      <div className="flex-1 overflow-y-auto p-6 production-scrollbar">
+        {loading ? (
+          <div className="py-8 text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-cyan-500" />
+          </div>
+        ) : comments.length === 0 ? (
+          <div className="py-8 text-center">
+            <MessageSquare className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+            <p className="text-sm text-slate-400">
+              No comments yet. Be the first to comment!
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="flex items-start gap-3"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20 flex-shrink-0">
+                  <User className="h-5 w-5 text-cyan-300" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div>
+                      <p className="text-sm font-semibold text-white">
+                        {comment.commenter_name}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {format(new Date(comment.created_at), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    {user && comment.user_id === user.id && (
+                      <button
+                        onClick={() => handleDelete(comment.id)}
+                        className="p-1 text-slate-400 hover:text-red-400 transition-colors flex-shrink-0"
+                        title="Delete comment"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
+                    {comment.comment_text}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
+      </div>
 
-        <div>
-          <label htmlFor="comment-text" className="block text-sm font-medium text-foreground mb-2">
-            Comment *
-          </label>
-          <textarea
-            id="comment-text"
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            required
-            rows={4}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-            placeholder="Share your thoughts..."
-          />
-        </div>
+      {/* Comment Form - Fixed at bottom */}
+      <div className="border-t border-slate-700 p-4 bg-slate-900/50">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {!user && (
+            <input
+              id="commenter-name"
+              type="text"
+              value={commenterName}
+              onChange={(e) => setCommenterName(e.target.value)}
+              required
+              className="w-full rounded-lg border border-slate-600 bg-slate-800/80 px-4 py-2.5 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
+              placeholder="Your name"
+            />
+          )}
 
-        <button
-          type="submit"
-          disabled={submitting || !commentText.trim() || (!user && (!commenterName.trim() || !commenterEmail.trim()))}
-          className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Send className="w-4 h-4" />
-          {submitting ? 'Posting...' : 'Post Comment'}
-        </button>
-      </form>
-
-      {/* Comments List */}
-      {loading ? (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      ) : comments.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p>No comments yet. Be the first to comment!</p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="p-4 bg-background border border-border rounded-lg"
+          <div className="flex items-center gap-2">
+            <input
+              id="comment-text"
+              type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              required
+              className="flex-1 rounded-full border border-slate-600 bg-slate-800/80 px-4 py-2.5 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
+              placeholder="Add a comment..."
+            />
+            <button
+              type="submit"
+              disabled={
+                submitting ||
+                !commentText.trim() ||
+                (!user && !commenterName.trim())
+              }
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500 text-white hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground">
-                      {comment.commenter_name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(comment.created_at), 'MMM d, yyyy • h:mm a')}
-                    </p>
-                  </div>
-                </div>
-                {user && comment.user_id === user.id && (
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                    title="Delete comment"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-              <p className="text-foreground whitespace-pre-wrap">
-                {comment.comment_text}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
