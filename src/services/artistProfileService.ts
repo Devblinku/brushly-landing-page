@@ -14,6 +14,7 @@ export interface ArtistProfile {
   public_profile_linkedin_url?: string | null;
   public_profile_twitter_url?: string | null;
   public_profile_tiktok_url?: string | null;
+  public_profile_email?: string | null;
 }
 
 export interface Artwork {
@@ -54,27 +55,48 @@ export const fetchArtistProfileBySlug = async (slug: string): Promise<ArtistProf
 };
 
 /**
- * Fetches artworks by their IDs
+ * Fetches artworks by their IDs with pagination
  */
-export const fetchArtworksByIds = async (artworkIds: string[], userId: string): Promise<Artwork[]> => {
+export const fetchArtworksByIds = async (
+  artworkIds: string[], 
+  userId: string, 
+  page: number = 1, 
+  pageSize: number = 10
+): Promise<{ artworks: Artwork[]; total: number }> => {
   if (!artworkIds || artworkIds.length === 0) {
-    return [];
+    return { artworks: [], total: 0 };
   }
 
   try {
+    const offset = (page - 1) * pageSize;
+    
+    // First, get the total count
+    const { count, error: countError } = await supabase
+      .from('artworks')
+      .select('*', { count: 'exact', head: true })
+      .in('id', artworkIds)
+      .eq('user_id', userId);
+
+    if (countError) {
+      console.error('Error counting artworks:', countError);
+      throw countError;
+    }
+
+    // Then fetch the paginated results
     const { data: artworks, error } = await supabase
       .from('artworks')
       .select('id, title, description, image_url, medium, created_at, updated_at')
       .in('id', artworkIds)
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
 
     if (error) {
       console.error('Error fetching artworks:', error);
       throw error;
     }
 
-    return artworks || [];
+    return { artworks: artworks || [], total: count || 0 };
   } catch (error) {
     console.error('Error fetching artworks:', error);
     throw error;

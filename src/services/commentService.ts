@@ -4,6 +4,7 @@ export interface ArtworkComment {
   id: string;
   artwork_id: string;
   user_id: string | null;
+  parent_id: string | null;
   commenter_name: string;
   commenter_email: string | null;
   comment_text: string;
@@ -19,15 +20,17 @@ export interface CreateCommentData {
 }
 
 /**
- * Fetches comments for an artwork
+ * Fetches comments for an artwork, including replies
+ * Returns top-level comments with their replies nested
  */
 export const fetchArtworkComments = async (artworkId: string): Promise<ArtworkComment[]> => {
   try {
+    // Fetch all comments (top-level and replies) for this artwork
     const { data: comments, error } = await supabase
       .from('artwork_comments')
       .select('*')
       .eq('artwork_id', artworkId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true }); // Sort ascending to show oldest first (replies will be nested)
 
     if (error) {
       console.error('Error fetching comments:', error);

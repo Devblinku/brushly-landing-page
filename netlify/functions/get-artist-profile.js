@@ -128,7 +128,8 @@ exports.handler = async (event, context) => {
       public_profile_instagram_url: userMetadata.public_profile_instagram_url || null,
       public_profile_linkedin_url: userMetadata.public_profile_linkedin_url || null,
       public_profile_twitter_url: userMetadata.public_profile_twitter_url || null,
-      public_profile_tiktok_url: userMetadata.public_profile_tiktok_url || null
+      public_profile_tiktok_url: userMetadata.public_profile_tiktok_url || null,
+      public_profile_email: userMetadata.public_profile_email || user.email || null
     };
 
     return {

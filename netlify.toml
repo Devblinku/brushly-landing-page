@@ -1,10 +1,19 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
+
+[dev]
+  command = "npm run dev"
+  port = 8888
+  targetPort = 5173
+  autoLaunch = false
+
+[functions]
+  directory = "netlify/functions"
+  external_node_modules = ["sharp", "node-fetch", "@supabase/supabase-js"]
 
 [[headers]]
   for = "/*.js"
@@ -16,19 +25,13 @@
   [headers.values]
     Content-Type = "application/javascript"
 
-[dev]
-  command = "npm run dev"
-  port = 8888
-  targetPort = 5173
-
-# Redirect all routes to index.html for client-side routing
+# API redirects for production
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
-[context.production]
-  [[context.production.redirects]]
-    from = "/*"
-    to = "/index.html"
-    status = 200
+# PostHog reverse proxy
+[[edge_functions]]
+  function = "posthog-proxy"
+  path = "/a/*"
