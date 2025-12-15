@@ -20,8 +20,6 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
   const [submitting, setSubmitting] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commenterName, setCommenterName] = useState('');
-  const [commenterEmail, setCommenterEmail] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     loadComments();
@@ -52,7 +50,7 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
         commenter_name: user
           ? (user.user_metadata?.artist_display_name || user.email?.split('@')[0] || 'Anonymous')
           : commenterName.trim(),
-        commenter_email: user?.email || commenterEmail.trim() || 'anonymous@brushly.art',
+        commenter_email: user?.email || 'anonymous@brushly.art',
         comment_text: commentText.trim()
       });
 
@@ -79,10 +77,6 @@ export const ArtworkComments: React.FC<ArtworkCommentsProps> = ({ artworkId }) =
       console.error('Error deleting comment:', error);
       alert('Failed to delete comment. Please try again.');
     }
-  };
-
-  const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
   };
 
   return (
