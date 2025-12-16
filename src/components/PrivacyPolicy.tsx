@@ -48,7 +48,7 @@ const PrivacyPolicy: React.FC = () => {
     },
     {
       icon: Brain,
-      title: "AI Model Training and Your Artwork",
+      title: "Your Art's Protection from AI",
       content: [
         {
           subtitle: "We Do Not Train AI Models with Your Artwork",
