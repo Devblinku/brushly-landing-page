@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Shield, Mail, Lock, Eye, Database, Users, Globe } from 'lucide-react';
+import { Shield, Mail, Lock, Eye, Database, Users, Globe, Brain } from 'lucide-react';
 import SmokeyCursor from './ui/SmokeyCursor';
 import { ModernHeader } from './ui/modern-header';
 import { Footer } from './ui/Footer';
@@ -34,7 +34,7 @@ const PrivacyPolicy: React.FC = () => {
       content: [
         {
           subtitle: "Service Provision",
-          text: "We use your information to provide, maintain, and improve our AI-powered content generation and social media management services, including generating personalized content for your artwork."
+          text: "We use your information to provide you with the services we offer on our app, including content and social media management features for your artwork."
         },
         {
           subtitle: "Communication",
@@ -47,12 +47,34 @@ const PrivacyPolicy: React.FC = () => {
       ]
     },
     {
+      icon: Brain,
+      title: "AI Model Training and Your Artwork",
+      content: [
+        {
+          subtitle: "We Do Not Train AI Models with Your Artwork",
+          text: "We want to be completely transparent: We do NOT use your artwork images to train our AI models. Your artwork is never used for machine learning, model training, or any form of AI development purposes."
+        },
+        {
+          subtitle: "How Your Artwork is Used",
+          text: "Your artwork images are used solely to create text content that you choose to generate in our app, such as descriptions, headings, and other text-based content. This is done only when you explicitly request content generation for your artwork."
+        },
+        {
+          subtitle: "Secure Storage",
+          text: "Your artwork and all other data is securely stored on Brushly servers. We implement industry-standard security measures to protect your data from unauthorized access, loss, or theft."
+        },
+        {
+          subtitle: "No Third-Party Sharing",
+          text: "Your artwork and personal data are not shared with any third parties. We do not sell, rent, or share your artwork images or any other personal information with third-party companies, AI training services, or any other external entities."
+        }
+      ]
+    },
+    {
       icon: Users,
       title: "Information Sharing",
       content: [
         {
           subtitle: "Third-Party Services",
-          text: "We may share your information with third-party service providers who help us operate our service, such as cloud storage providers, AI processing services, and social media platforms when you choose to publish content."
+          text: "We do not share your personal information or artwork with third parties. Your data is stored securely on our infrastructure, and any content you choose to publish to social media platforms is shared only at your explicit request and action. We maintain complete control over your artwork and personal data, ensuring they remain private and protected."
         },
         {
           subtitle: "Legal Requirements",
