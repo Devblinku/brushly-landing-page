@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Image as ImageIcon, User, MessageSquare, X, Instagram, Linkedin, Facebook, Twitter, CheckCircle2, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, User, MessageSquare, X, Instagram, Linkedin, Facebook, Twitter, CheckCircle2, ChevronLeft, ChevronRight, Mail, Award } from 'lucide-react';
 import { ModernHeader } from '../ui/modern-header';
 import { Footer } from '../ui/Footer';
 import {
@@ -429,6 +429,37 @@ const ArtistProfilePage: React.FC = () => {
                   )}
                 </div>
               </div>
+
+              {/* Achievements Section */}
+              {profile.public_profile_achievements && profile.public_profile_achievements.length > 0 && (
+                <div className="mb-10 pb-10 border-b border-slate-700/50">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.25em] text-white mb-4 flex items-center gap-2">
+                    <Award className="w-4 h-4 text-cyan-400" />
+                    Achievements
+                  </h2>
+                  <ul className="space-y-2 list-none">
+                    {profile.public_profile_achievements.map((achievement, index) => {
+                      // Handle both string and object achievements (objects have {id, title} structure)
+                      const achievementText = typeof achievement === 'string' 
+                        ? achievement 
+                        : (achievement?.title || achievement?.id || String(achievement));
+                      
+                      return (
+                        <motion.li
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          className="flex items-start gap-3 text-slate-300"
+                        >
+                          <span className="text-cyan-400 mt-1.5 flex-shrink-0">•</span>
+                          <span className="leading-relaxed">{achievementText}</span>
+                        </motion.li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
 
               {/* Portfolio Section */}
               {profile.public_profile_artworks && profile.public_profile_artworks.length > 0 ? (

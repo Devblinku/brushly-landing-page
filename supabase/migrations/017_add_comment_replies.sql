@@ -55,3 +55,4 @@ COMMENT ON POLICY "Artists can reply to comments on own artworks" ON artwork_com
 COMMENT ON POLICY "Artists can delete comments on own artworks" ON artwork_comments IS 
   'Allows artists to delete any comment or reply on their own artworks for moderation purposes.';
 
+
