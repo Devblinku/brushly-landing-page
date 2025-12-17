@@ -15,7 +15,7 @@ export interface ArtistProfile {
   public_profile_twitter_url?: string | null;
   public_profile_tiktok_url?: string | null;
   public_profile_email?: string | null;
-  public_profile_achievements?: string[];
+  public_profile_achievements?: (string | { id: string; title: string })[];
 }
 
 export interface Artwork {

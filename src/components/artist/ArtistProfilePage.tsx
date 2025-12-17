@@ -440,9 +440,15 @@ const ArtistProfilePage: React.FC = () => {
                   <ul className="space-y-2 list-none">
                     {profile.public_profile_achievements.map((achievement, index) => {
                       // Handle both string and object achievements (objects have {id, title} structure)
-                      const achievementText = typeof achievement === 'string' 
-                        ? achievement 
-                        : (achievement?.title || achievement?.id || String(achievement));
+                      let achievementText: string;
+                      if (typeof achievement === 'string') {
+                        achievementText = achievement;
+                      } else if (typeof achievement === 'object' && achievement !== null) {
+                        const achievementObj = achievement as { id?: string; title?: string };
+                        achievementText = achievementObj.title || achievementObj.id || String(achievement);
+                      } else {
+                        achievementText = String(achievement);
+                      }
                       
                       return (
                         <motion.li
